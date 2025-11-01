@@ -1,0 +1,32 @@
+ /* Use the Inter font family */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar */
+        .results-container::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .results-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .results-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .results-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Simple spinning loader animation */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .loader {
+            animation: spin 1s linear infinite;
+        }
