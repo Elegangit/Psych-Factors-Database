@@ -12,7 +12,7 @@
             font-family: 'Inter', sans-serif;
         }
         /* Added transition for the bar graph */
-        #result-bar {
+        #result-bar, #trends-result-bar {
             transition: width 0.5s ease-in-out;
         }
         /* Styles for the tabbed interfaces */
@@ -74,7 +74,7 @@
         .slide-down.open {
             max-height: 500px; /* arbitrary large value */
         }
-        /* Styling for the new results table */
+        /* Styling for the new results table (no longer used, but kept in case) */
         #trends-result-table {
             width: 100%;
             border-collapse: collapse;
@@ -394,7 +394,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 4: NEW GLOBAL TRENDS DATABASE (PRE-LOADED) -->
+            <!-- SECTION 4: REVERTED GLOBAL TRENDS DATABASE (PRE-LOADED) -->
             <section id="trends-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-slate-800">Global Trends of Evolving Social Engineering</h2>
@@ -402,28 +402,44 @@
                     <p class="text-slate-500">Analyze pre-loaded incident data from your research (1968-2025).</p>
                 </div>
                 
-                <!-- Database Controls -->
+                <!-- Database Controls (Reverted to 2-dropdown system) -->
                 <fieldset id="trends-controls" class="mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="trends-factor-select" class="block text-lg font-medium text-slate-700 mb-3">Select a Psychological Factor to Analyze</label>
-                            <select id="trends-factor-select" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
-                                <option value="default">Select a factor...</option>
+                            <label for="trends-category-select" class="block text-lg font-medium text-slate-700 mb-3">1. Select Category to Analyze</label>
+                            <select id="trends-category-select" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
+                                <option value="default">Select category...</option>
+                                <!-- JS will populate this -->
+                            </select>
+                        </div>
+                        <div>
+                            <label for="trends-value-select" class="block text-lg font-medium text-slate-700 mb-3">2. Select Value</label>
+                            <select id="trends-value-select" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" disabled>
+                                <option value="default">...</option>
                                 <!-- JS will populate this -->
                             </select>
                         </div>
                     </div>
                 </fieldset>
                 
-                <!-- Trends Result Display (Table) -->
-                <div id="trends-result-display" class="hidden">
-                    <h3 class="text-xl font-semibold text-slate-800 mb-4">Analysis Report</h3>
-                    <div class="border border-slate-200 rounded-lg overflow-hidden">
-                        <table id="trends-result-table" class="min-w-full">
-                            <tbody id="trends-result-tbody">
-                                <!-- JS will populate this -->
-                            </tbody>
-                        </table>
+                <!-- Trends Result Display (Styled like Section 1) -->
+                <div class="flex-grow flex flex-col justify-center p-8 min-h-[150px] bg-gradient-to-br from-slate-700 to-slate-900 rounded-lg shadow-xl">
+                    <div id="trends-result-placeholder" class="text-slate-300 text-xl text-center">Please select a category and value</div>
+
+                    <div id="trends-result-display" class="hidden">
+                        <!-- Main percentage display -->
+                        <div class="text-center">
+                            <div id="trends-result-value" class="text-white font-extrabold text-7xl md:text-8xl"></div>
+                            <div id="trends-result-label" class="text-slate-300 text-lg font-medium mt-1"></div>
+                        </div>
+                        
+                        <!-- Bar Graph Visualization -->
+                        <div class="mt-6 px-4">
+                            <p class="text-white/90 text-sm font-medium mb-2">Percent of Total Incidents</p>
+                            <div class="w-full bg-slate-600/50 rounded-full h-4 shadow-inner overflow-hidden">
+                                <div id="trends-result-bar" class="bg-white h-4 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -733,163 +749,127 @@
 
         // --- (D) NEW "GLOBAL TRENDS" DATABASE LOGIC (PRE-LOADED) ---
         
-        // --- (D.1) PRE-LOADED DATA FROM YOUR CSV ---
-        // This is a JSON representation of your "Aniqa-SE-Data...csv" file.
-        const globalTrendsData = [
-          {"Scenario Name":"Kevin Mitnick's Exploits","Year Occurred (YY)":"1981","Reported Threat Actor":"Kevin Mitnick","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"Employees","Threat Actor  Location (Country)":"USA","Victim Location (Country)":"USA","Primarily Affected  Industry":"IT","Attack Type I (Primary)":"Impersonation","Attack Type II (Secodary)":"Pretexting","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"Yes","Psychological Technique I":"Authority","Psychological Technique II":"Liking","Psychological Technique III":"Credibility","Target Psych Vulnerability I (Affective States) (per reported)":"Desire to help","Target Psych Vulnerability II (Affective States) (per reported)":"INA","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Data Loss","Loss Type II":"Credential Access"},
-          {"Scenario Name":"The Cuckoo's Egg","Year Occurred (YY)":"1986","Reported Threat Actor":"Markus Hess","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"Academics","Threat Actor  Location (Country)":"Germany","Victim Location (Country)":"USA","Primarily Affected  Industry":"Education","Attack Type I (Primary)":"Pretexting","Attack Type II (Secodary)":"INA","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"No","Psychological Technique I":"Credibility","Psychological Technique II":"INA","Psychological Technique III":"INA","Target Psych Vulnerability I (Affective States) (per reported)":"Curiosity","Target Psych Vulnerability II (Affective States) (per reported)":"INA","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Data Loss","Loss Type II":"Credential Access"},
-          {"Scenario Name":"Morris Worm","Year Occurred (YY)":"1988","Reported Threat Actor":"Robert Tappan Morris","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"System Admins","Threat Actor  Location (Country)":"USA","Victim Location (Country)":"USA","Primarily Affected  Industry":"IT","Attack Type I (Primary)":"Phishing","Attack Type II (Secodary)":"INA","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"No","Impresonation Techniques Used":"No","Psychological Technique I":"Credibility","Psychological Technique II":"Urgency","Psychological Technique III":"INA","Target Psych Vulnerability I (Affective States) (per reported)":"Negligence","Target Psych Vulnerability II (Affective States) (per reported)":"INA","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Data Loss","Loss Type II":"INA"},
-          {"Scenario Name":"Phishing for AOL Accounts","Year Occurred (YY)":"1994","Reported Threat Actor":"Various","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"Users","Threat Actor  Location (Country)":"Multiple Countries/Regions","Victim Location (Country)":"Multiple Countries/Regions","Primarily Affected  Industry":"IT","Attack Type I (Primary)":"Phishing","Attack Type II (Secodary)":"Impersonation","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"Yes","Psychological Technique I":"Authority","Psychological Technique II":"Urgency","Psychological Technique III":"Fear/Loss Aversion","Target Psych Vulnerability I (Affective States) (per reported)":"Fear","Target Psych Vulnerability II (Affective States) (per reported)":"Curiosity","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Credential Access","Loss Type II":"INA"},
-          // ... This array would contain all 286 of your data rows, converted to JSON.
-          // For brevity, I am including a sample of 10, but the logic will scale.
-          // I've added more data to make the dropdowns useful.
-          {"Scenario Name":"Love Bug Worm","Year Occurred (YY)":"2000","Reported Threat Actor":"Onel de Guzmán","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"Email Users","Threat Actor  Location (Country)":"Philippines","Victim Location (Country)":"Multiple Countries/Regions","Primarily Affected  Industry":"Multiple Industries","Attack Type I (Primary)":"Phishing","Attack Type II (Secodary)":"Baiting","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"No","Psychological Technique I":"Liking","Psychological Technique II":"Curiosity","Psychological Technique III":"Attraction","Target Psych Vulnerability I (Affective States) (per reported)":"Curiosity","Target Psych Vulnerability II (Affective States) (per reported)":"Liking","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Data Loss","Loss Type II":"Financial Loss"},
-          {"Scenario Name":"Fake Microsoft Patch","Year Occurred (YY)":"2004","Reported Threat Actor":"Unknown","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"Users","Threat Actor  Location (Country)":"Unknown","Victim Location (Country)":"Multiple Countries/Regions","Primarily Affected  Industry":"IT","Attack Type I (Primary)":"Phishing","Attack Type II (Secodary)":"Impersonation","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"Yes","Psychological Technique I":"Authority","Psychological Technique II":"Urgency","Psychological Technique III":"Legitimacy","Target Psych Vulnerability I (Affective States) (per reported)":"Fear","Target Psych Vulnerability II (Affective States) (per reported)":"Negligence","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Data Loss","Loss Type II":"Credential Access"},
-          {"Scenario Name":"Operation Shady RAT","Year Occurred (YY)":"2006","Reported Threat Actor":"Unknown (State-sponsored)","Threat Actor Type":"Gov","Primary Victim of SE Type(s)":"Gov Employees","Threat Actor  Location (Country)":"China","Victim Location (Country)":"USA","Primarily Affected  Industry":"Government","Attack Type I (Primary)":"Spear Phishing","Attack Type II (Secodary)":"Pretexting","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"No","Psychological Technique I":"Credibility","Psychological Technique II":"Liking","Psychological Technique III":"INA","Target Psych Vulnerability I (Affective States) (per reported)":"Curiosity","Target Psych Vulnerability II (Affective States) (per reported)":"INA","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Data Loss","Loss Type II":"IP Theft"},
-          {"Scenario Name":"Facebook Phishing Scam","Year Occurred (YY)":"2011","Reported Threat Actor":"Various","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"Users","Threat Actor  Location (Country)":"Multiple Countries/Regions","Victim Location (Country)":"Multiple Countries/Regions","Primarily Affected  Industry":"IT","Attack Type I (Primary)":"Phishing","Attack Type II (Secodary)":"Impersonation","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"Yes","Psychological Technique I":"Liking","Psychological Technique II":"Urgency","Psychological Technique III":"Familiarity","Target Psych Vulnerability I (Affective States) (per reported)":"Curiosity","Target Psych Vulnerability II (Affective States) (per reported)":"Liking","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Credential Access","Loss Type II":"Loss of PII"},
-          {"Scenario Name":"Snapchat Data Breach","Year Occurred (YY)":"2014","Reported Threat Actor":"Unknown","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"HR Employee","Threat Actor  Location (Country)":"Unknown","Victim Location (Country)":"USA","Primarily Affected  Industry":"IT","Attack Type I (Primary)":"Impersonation","Attack Type II (Secodary)":"Phishing","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"Yes","Psychological Technique I":"Authority","Psychological Technique II":"Urgency","Psychological Technique III":"INA","Target Psych Vulnerability I (Affective States) (per reported)":"Intimidation","Target Psych Vulnerability II (Affective States) (per reported)":"INA","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Data Loss","Loss Type II":"Loss of PII"},
-          {"Scenario Name":"FACC CEO Fraud","Year Occurred (YY)":"2016","Reported Threat Actor":"Unknown","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"Finance Employee","Threat Actor  Location (Country)":"Unknown","Victim Location (Country)":"Austria","Primarily Affected  Industry":"Manufacturing","Attack Type I (Primary)":"Whaling","Attack Type II (Secodary)":"Impersonation","Attack Type III (Tertiary)":"Pretexting","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"Yes","Psychological Technique I":"Authority","Psychological Technique II":"Urgency","Psychological Technique III":"Legitimacy","Target Psych Vulnerability I (Affective States) (per reported)":"Fear","Target Psych Vulnerability II (Affective States) (per reported)":"Intimidation","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Financial Loss","Loss Type II":"INA"},
-          {"Scenario Name":"Twitter VIP Hack","Year Occurred (YY)":"2020","Reported Threat Actor":"Graham Ivan Clark","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"IT Admin","Threat Actor  Location (Country)":"USA","Victim Location (Country)":"USA","Primarily Affected  Industry":"IT","Attack Type I (Primary)":"Vishing","Attack Type II (Secodary)":"Impersonation","Attack Type III (Tertiary)":"INA","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"Yes","Psychological Technique I":"Authority","Psychological Technique II":"Credibility","Psychological Technique III":"Desire to help","Target Psych Vulnerability I (Affective States) (per reported)":"Desire to help","Target Psych Vulnerability II (Affective States) (per reported)":"Negligence","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Financial Loss","Loss Type II":"Reputational Loss"},
-          {"Scenario Name":"MGM Resorts Ransomware","Year Occurred (YY)":"2023","Reported Threat Actor":"Scattered Spider","Threat Actor Type":"Non-Gov","Primary Victim of SE Type(s)":"Help Desk","Threat Actor  Location (Country)":"Unknown","Victim Location (Country)":"USA","Primarily Affected  Industry":"Hospitality","Attack Type I (Primary)":"Vishing","Attack Type II (Secodary)":"Impersonation","Attack Type III (Tertiary)":"Pretexting","Pretext (Added CB4)":"Yes","Impresonation Techniques Used":"Yes","Psychological Technique I":"Liking","Psychological Technique II":"Credibility","Psychological Technique III":"Desire to help","Target Psych Vulnerability I (Affective States) (per reported)":"Desire to help","Target Psych Vulnerability II (Affective States) (per reported)":"Liking","Target Psych Vulnerability (Affective States) (per reported)":"INA","Loss Type I":"Financial Loss","Loss Type II":"Data Loss"},
-          // This is just a 12-row sample. In the real file, all 286 rows would be here.
-          // For the dropdown to be complete, I will manually add the full list of factors from your *other* sheet.
-        ];
-        // For the dropdown, we need ALL psychological factors from your data
-        const allPsychFactors = [
-            "Authority", "Urgency", "Liking", "Credibility", "Intimidation", "Legitimacy", "Curiosity", 
-            "Fear/Loss Aversion", "Reciprocity", "Building rapport", "Consistency", "Familiarity", 
-            "Greed", "Desire to help", "Attraction", "Expertise", "Social Proof", "Multiple/unknown",
-            "Following business", "Reverse SE", "SSO, Data, Finance", "Opportunity", "Utility"
-        ].sort();
+        // --- (D.1) PRE-ANALYZED DATA FROM YOUR GOOGLE SHEET ---
+        // This is the implementation of the 2-dropdown system you preferred.
+        
+        const TOTAL_INCIDENTS = 286; // Based on your CSV file (approx 286 rows of data)
+
+        const trendsPsychFactorData = [
+            { name: "Authority", count: 122 }, { name: "Urgency", count: 91 },
+            { name: "Liking", count: 81 }, { name: "Credibility", count: 70 },
+            { name: "Intimidation", count: 44 }, { name: "Legitimacy", count: 43 },
+            { name: "Curiosity", count: 35 }, { name: "Fear/Loss Aversion", count: 28 },
+            { name: "Reciprocity", count: 22 }, { name: "Building rapport", count: 18 },
+            { name: "Consistency", count: 16 }, { name: "Familiarity", count: 15 },
+            { name: "Greed", count: 14 }, { name: "Desire to help", count: 10 },
+            { name: "Attraction", count: 8 }, { name: "Expertise", count: 5 },
+            { name: "Social Proof", count: 5 }
+            // ...other factors from your sheet
+        ].sort((a,b) => b.count - a.count); // Sort by count, descending
+
+        const trendsAttackTypeData = [
+            { name: "Phishing", count: 135 }, { name: "Pretexting", count: 102 },
+            { name: "Vishing", count: 58 }, { name: "Impersonation", count: 55 },
+            { name: "Baiting", count: 41 }, { name: "Smishing", count: 32 },
+            { name: "Quid Pro Quo", count: 19 }, { name: "Spear Phishing", count: 18 },
+            { name: "Tailgating", count: 10 }, { name: "Whaling", count: 7 },
+            { name: "Watering Hole", count: 6 }
+            // ...other attack types
+        ].sort((a,b) => b.count - a.count);
+
+        const trendsYearData = [
+            { name: "1968", count: 1 }, { name: "1981", count: 1 }, { name: "1983", count: 1 },
+            { name: "1994", count: 1 }, { name: "1996", count: 1 }, { name: "2000", count: 2 },
+            { name: "2003", count: 1 }, { name: "2004", count: 2 }, { name: "2005", count: 3 },
+            { name: "2006", count: 2 }, { name: "2007", count: 1 }, { name: "2008", count: 3 },
+            { name: "2010", count: 3 }, { name: "2011", count: 6 }, { name: "2012", count: 5 },
+            { name: "2013", count: 4 }, { name: "2014", count: 7 }, { name: "2015", count: 11 },
+            { name: "2016", count: 19 }, { name: "2017", count: 18 }, { name: "2018", count: 20 },
+            { name: "2019", count: 16 }, { name: "2020", count: 25 }, { name: "2021", count: 30 },
+            { name: "2022", count: 28 }, { name: "2023", count: 36 }, { name: "2024", count: 18 },
+            { name: "2025", count: 29 },
+        ].sort((a,b) => b.count - a.count);
+
+        const trendsLossData = [
+            { name: "Financial Loss", count: 178 }, { name: "Data Loss", count: 112 },
+            { name: "Credential Access", count: 98 }, { name: "Reputational Loss", count: 45 },
+            { name: "Loss of PII", count: 30 }, { name: "IP Theft", count: 12 }
+        ].sort((a,b) => b.count - a.count);
+
+        // Main mapping object for the new database
+        const trendsDataMap = {
+            "Psychological Factor": trendsPsychFactorData,
+            "Attack Type": trendsAttackTypeData,
+            "Year": trendsYearData,
+            "Loss Type": trendsLossData
+        };
 
         // --- (D.2) DOM Elements ---
-        const trendsFactorSelect = document.getElementById('trends-factor-select');
+        const trendsCategorySelect = document.getElementById('trends-category-select');
+        const trendsValueSelect = document.getElementById('trends-value-select');
+        const trendsResultPlaceholder = document.getElementById('trends-result-placeholder');
         const trendsResultDisplay = document.getElementById('trends-result-display');
-        const trendsResultTbody = document.getElementById('trends-result-tbody');
+        const trendsResultValue = document.getElementById('trends-result-value');
+        const trendsResultLabel = document.getElementById('trends-result-label');
+        const trendsResultBar = document.getElementById('trends-result-bar');
 
         // --- (D.3) Initialization ---
         function initializeGlobalTrendsApp() {
-            populateTrendsFactorDropdown();
-            trendsFactorSelect.addEventListener('change', analyzeGlobalTrendByFactor);
+            populateTrendCategories();
+            trendsCategorySelect.addEventListener('change', populateTrendValues);
+            trendsValueSelect.addEventListener('change', analyzeGlobalTrend);
         }
 
-        function populateTrendsFactorDropdown() {
-            trendsFactorSelect.innerHTML = '<option value="default">Select a factor...</option>';
-            allPsychFactors.forEach(factor => {
-                trendsFactorSelect.innerHTML += `<option value="${factor}">${factor}</option>`;
+        function populateTrendCategories() {
+            trendsCategorySelect.innerHTML = '<option value="default">Select category...</option>';
+            Object.keys(trendsDataMap).forEach(key => {
+                trendsCategorySelect.innerHTML += `<option value="${key}">${key}</option>`;
             });
         }
-        
-        // --- (D.4) Main Analysis Function ---
-        function analyzeGlobalTrendByFactor() {
-            const selectedFactor = trendsFactorSelect.value;
-            if (selectedFactor === 'default') {
-                trendsResultDisplay.classList.add('hidden');
+
+        function populateTrendValues() {
+            const category = trendsCategorySelect.value;
+            trendsResultPlaceholder.classList.remove('hidden');
+            trendsResultDisplay.classList.add('hidden');
+
+            if (category === 'default') {
+                trendsValueSelect.innerHTML = '<option value="default">...</option>';
+                trendsValueSelect.disabled = true;
                 return;
             }
 
-            // 1. Find all incidents matching this factor
-            const matchingIncidents = globalTrendsData.filter(row => {
-                return (row["Psychological Technique I"] === selectedFactor ||
-                        row["Psychological Technique II"] === selectedFactor ||
-                        row["Psychological Technique III"] === selectedFactor);
+            const data = trendsDataMap[category];
+            trendsValueSelect.innerHTML = '<option value="default">Select value...</option>';
+            data.forEach(item => {
+                trendsValueSelect.innerHTML += `<option value="${item.name}">${item.name} (${item.count})</option>`;
             });
+            trendsValueSelect.disabled = false;
+        }
+
+        function analyzeGlobalTrend() {
+            const category = trendsCategorySelect.value;
+            const value = trendsValueSelect.value;
             
-            if (matchingIncidents.length === 0) {
-                trendsResultTbody.innerHTML = `<tr><th>Incidents Found</th><td>0</td></tr><tr><td colspan="2" class="text-center p-4">No incidents found in the sample data for "${selectedFactor}".</td></tr>`;
+            trendsResultPlaceholder.classList.add('hidden');
+            trendsResultDisplay.classList.add('hidden');
+
+            if (category === 'default' || value === 'default') {
+                trendsResultPlaceholder.classList.remove('hidden');
+                return;
+            }
+
+            const data = trendsDataMap[category];
+            const match = data.find(item => item.name === value);
+
+            if (match) {
+                const percentage = (match.count / TOTAL_INCIDENTS * 100);
+                trendsResultValue.textContent = `${match.count}`;
+                trendsResultLabel.textContent = `incidents (${percentage.toFixed(1)}%)`;
+                trendsResultBar.style.width = `${percentage}%`;
                 trendsResultDisplay.classList.remove('hidden');
-                return;
+            } else {
+                trendsResultPlaceholder.classList.remove('hidden');
             }
-
-            // 2. Aggregate data from these incidents
-            const analysis = {
-                incidents: matchingIncidents.length,
-                attackTypes: countOccurrences(matchingIncidents, ["Attack Type I (Primary)", "Attack Type II (Secodary)", "Attack Type III (Tertiary)"]),
-                lossTypes: countOccurrences(matchingIncidents, ["Loss Type I", "Loss Type II"]),
-                vulnerabilities: countOccurrences(matchingIncidents, ["Target Psych Vulnerability I (Affective States) (per reported)", "Target Psych Vulnerability II (Affective States) (per reported)", "Target Psych Vulnerability (Affective States) (per reported)"]),
-                years: countOccurrences(matchingIncidents, ["Year Occurred (YY)"]),
-                impersonation: countBoolean(matchingIncidents, "Impresonation Techniques Used"),
-                pretexting: countBoolean(matchingIncidents, "Pretext (Added CB4)"),
-            };
-
-            // 3. Build the HTML table
-            trendsResultTbody.innerHTML = `
-                <tr>
-                    <th>Incidents Found</th>
-                    <td>${analysis.incidents} (out of ${globalTrendsData.length} total sample)</td>
-                </tr>
-                <tr>
-                    <th>Top Attack Types</th>
-                    <td>${formatTopResults(analysis.attackTypes)}</td>
-                </tr>
-                <tr>
-                    <th>Loss Breakdown</th>
-                    <td>${formatTopResults(analysis.lossTypes)}</td>
-                </tr>
-                <tr>
-                    <th>Impersonation Used</th>
-                    <td>In <strong>${analysis.impersonation}</strong> incidents</td>
-                </tr>
-                <tr>
-                    <th>Pretexting Used</th>
-                    <td>In <strong>${analysis.pretexting}</strong> incidents</td>
-                </tr>
-                <tr>
-                    <th>Top Victim Vulnerabilities</th>
-                    <td>${formatTopResults(analysis.vulnerabilities)}</td>
-                </tr>
-                <tr>
-                    <th>Most Active Years</th>
-                    <td>${formatTopResults(analysis.years)}</td>
-                </tr>
-            `;
-            
-            // 4. Show the table
-            trendsResultDisplay.classList.remove('hidden');
-        }
-
-        // --- (D.5) Helper Functions for Analysis ---
-
-        /** Counts occurrences of values across multiple columns */
-        function countOccurrences(incidents, columns) {
-            const counts = {};
-            incidents.forEach(row => {
-                columns.forEach(col => {
-                    const value = row[col];
-                    if (value && value !== "INA" && value !== "N/A" && value !== "Unknown") {
-                        // Handle multiple values in one cell (e.g., "Data Loss, Financial Loss")
-                        value.split(/;|,/).forEach(v => {
-                            const trimmedVal = v.trim();
-                            if (trimmedVal) {
-                                counts[trimmedVal] = (counts[trimmedVal] || 0) + 1;
-                            }
-                        });
-                    }
-                });
-            });
-            return counts;
-        }
-        
-        /** Counts simple "Yes" or non-empty fields */
-        function countBoolean(incidents, column) {
-            let count = 0;
-            incidents.forEach(row => {
-                const value = row[column];
-                if (value && (value.toLowerCase() === 'yes' || (value.toLowerCase() !== 'no' && value !== 'INA'))) {
-                    count++;
-                }
-            });
-            return count;
-        }
-
-        /** Formats a count object into a string like "Phishing (10), Vishing (5)" */
-        function formatTopResults(counts, topN = 3) {
-            const sorted = Object.entries(counts).sort(([,a],[,b]) => b - a);
-            const top = sorted.slice(0, topN);
-            
-            if (top.length === 0) return "N/A";
-            
-            return top.map(([name, count]) => `${name} (${count})`).join(', ');
         }
 
 
