@@ -4,220 +4,489 @@
     <meta charset="UTF-m">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Psychological Factors in Social Engineering</title>
-    
-    <!-- 1. Load Tailwind CSS (from CDN) -->
+    <!-- 1. Load Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- 2. Import Inter font from Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- 3. All CSS is now in-line -->
     <style>
         /* Use the Inter font family */
         body {
             font-family: 'Inter', sans-serif;
         }
-
-        /* Custom scrollbar */
-        .results-container::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        /* Added transition for the bar graph */
+        #result-bar {
+            transition: width 0.5s ease-in-out;
         }
-        .results-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
+        /* Styles for the tabbed interfaces */
+        .tab-button {
+            transition: all 0.2s ease-in-out;
         }
-        .results-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
+        .tab-button:hover {
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e40af; /* blue-800 */
         }
-        .results-container::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .tab-button[aria-selected="true"] {
+            border-color: #3b82f6; /* blue-500 */
+            color: #1d4ed8; /* blue-700 */
+            font-weight: 600;
         }
-
-        /* Simple spinning loader animation */
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+        .tab-panel.hidden {
+            display: none;
         }
-        .loader {
-            animation: spin 1s linear infinite;
+        /* Styling for the new copy/share buttons */
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0; /* slate-200 */
+            background-color: #ffffff; /* white */
+            color: #475569; /* slate-600 */
+            transition: all 0.15s ease;
         }
-
-        /* Modal styles */
-        .modal {
-            transition: opacity 0.25s ease;
+        .action-button:hover {
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e40af; /* blue-800 */
         }
-        .modal-content {
-            transition: transform 0.25s ease;
+        .action-button svg {
+            margin-right: 6px;
+        }
+        /* Custom "Copied" Notification */
+        #copy-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 50;
+        }
+        #copy-notification.hidden {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+            pointer-events: none;
         }
     </style>
+    <!-- Import Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="bg-slate-100 min-h-screen p-4 md:p-8 flex flex-col">
 
-    <div class="max-w-7xl mx-auto w-full">
+    <!-- Centered, single-column layout -->
+    <div class="max-w-4xl mx-auto w-full">
         <header class="mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-800 text-center">
                 Psychological Factors and their influence in Social Engineering based on Undetected Vulnerabilities
             </h1>
-            <p class="text-slate-500 text-center mt-2 text-lg">An Internal Database & Live Web Research Tool</p>
+            <p class="text-slate-500 text-center mt-2 text-lg">An Internal Database & Research Tool</p>
         </header>
 
-        <!-- Main content grid -->
-        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-grow">
+        <main class="flex flex-col gap-8">
 
-            <!-- SECTION 1: INTERNAL DATABASE LOOKUP (SIMPLIFIED) -->
-            <div class="bg-white rounded-xl shadow-2xl p-6 md:p-8 flex flex-col">
+            <!-- SECTION 1: INTERNAL DATABASE LOOKUP (with Bar Graph) -->
+            <section class="bg-white rounded-xl shadow-2xl p-6 md:p-8 flex flex-col">
                 <h2 class="text-2xl font-bold text-slate-800 mb-2">Internal Database Lookup</h2>
                 <p class="text-slate-500 mb-6">Data from "Psych factors.pdf" (Aniqa Afzal, 2025)</p>
-
-                <!-- Control: Dropdown Select -->
                 <div class="mb-6">
                     <label for="select-factor" class="block text-lg font-medium text-slate-700 mb-3">Select a Psychological Factor</label>
                     <select id="select-factor" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
                         <!-- Options will be populated by JS -->
                     </select>
                 </div>
+                
+                <!-- Result Display (Now with Bar Graph) -->
+                <div class="flex-grow flex flex-col justify-center p-8 min-h-[150px] bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-xl">
+                    <div id="result-placeholder" class="text-blue-100 text-xl text-center">Please select a factor</div>
+                    
+                    <!-- Main percentage display -->
+                    <div id="result-display" class="hidden">
+                        <div class="text-center">
+                            <div id="result-value" class="text-white font-extrabold text-7xl md:text-8xl"></div>
+                            <div id="result-label" class="text-blue-200 text-lg font-medium mt-1">% contribution in Social Engineering scams</div>
+                        </div>
+                        
+                        <!-- Bar Graph Visualization -->
+                        <div class="mt-6 px-4">
+                            <p class="text-white/90 text-sm font-medium mb-2">Contribution Visualization</p>
+                            <div class="w-full bg-blue-900/50 rounded-full h-4 shadow-inner overflow-hidden">
+                                <div id="result-bar" class="bg-white h-4 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                <!-- *** NEW FEATURE ***: Learn More Button -->
+            <!-- SECTION 2: CIALDINI'S 6 PRINCIPLES OF PERSUASION -->
+            <section id="cialdini-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
                 <div class="mb-6">
-                    <button id="learn-more-button" disabled class="w-full p-3 bg-indigo-600 text-white rounded-lg shadow-md font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                        ✨ Learn More About This Factor
-                    </button>
+                    <h2 class="text-2xl font-bold text-slate-800">Cialdini's 6 Principles of Persuasion</h2>
+                    <p class="text-slate-500">Definitions, examples, and prevention tips based on source research.</p>
                 </div>
-                <!-- ************************ -->
 
-                <!-- Result Display -->
-                <div class="flex-grow flex items-center justify-center p-8 min-h-[150px] bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-xl">
-                    <div class="text-center">
-                        <div id="result-placeholder" class="text-blue-100 text-xl">Please select a factor</div>
-                        <div id="result-value" class="hidden text-white font-extrabold text-7xl md:text-8xl"></div>
-                        <div id="result-label" class="hidden text-blue-200 text-lg font-medium mt-1">% contribution in Social Engineering scams</div>
-                    </div>
+                <!-- Tab Headers -->
+                <div class="border-b border-slate-200">
+                    <nav id="cialdini-tabs-container" class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
+                        <button role="tab" aria-selected="true" data-tab-target="cialdini-authority" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Authority</button>
+                        <button role="tab" aria-selected="false" data-tab-target="cialdini-urgency" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Urgency (Scarcity)</button>
+                        <button role="tab" aria-selected="false" data-tab-target="cialdini-liking" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Liking</button>
+                        <button role="tab" aria-selected="false" data-tab-target="cialdini-reciprocity" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Reciprocity</button>
+                        <button role="tab" aria-selected="false" data-tab-target="cialdini-consistency" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Consistency</button>
+                        <button role="tab" aria-selected="false" data-tab-target="cialdini-social-proof" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Social Proof</button>
+                    </nav>
                 </div>
-            </div>
 
-            <!-- SECTION 2: LIVE WEB RESEARCH -->
-            <div class="bg-white rounded-xl shadow-2xl p-6 md:p-8 flex flex-col">
-                <h2 class="text-2xl font-bold text-slate-800 mb-2">Live Web Research</h2>
-                <p class="text-slate-500 mb-6">Find external reports on data loss & financial impact.</p>
-                
-                <!-- Search Bar -->
-                <div class="relative mb-4">
-                    <input type="text" id="search-input" placeholder="e.g., 'urgency social engineering academic paper'" class="w-full p-4 pr-16 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
-                    <button id="search-button" class="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </button>
-                </div>
-                
-                <!-- Search Results Area -->
-                <div id="search-results-container" class="results-container flex-grow mt-4 p-4 border border-slate-200 rounded-lg bg-slate-50 shadow-inner overflow-auto min-h-[400px]">
-                    <!-- Loader -->
-                    <div id="loader" class="hidden items-center justify-center flex-col h-full">
-                        <svg class="loader h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9H4V4m.582 5H9m11.418 2a8.003 8.003 0 01-15.356-2H15m.582 5H19v5h-.582m-15.356-2A8.001 8.001 0 0019.418 15H20v5h-.582m-5.6-1.582A8.003 8.003 0 014.582 15H9"/>
-                        </svg>
-                        <p class="text-slate-500 mt-4">Searching Google for academic papers & reports...</p>
-                    </div>
-
-                    <!-- Error Message -->
-                    <div id="search-error" class="hidden items-center justify-center h-full">
-                        <p class="text-red-500 text-center"></p>
-                    </div>
-
-                    <!-- Initial Prompt -->
-                    <div id="search-prompt" class="flex items-center justify-center h-full">
-                        <p class="text-slate-400 text-center text-lg">Search for real-time case studies and reports.</p>
-                    </div>
-
-                    <!-- Results -->
-                    <div id="search-results" class="hidden">
-                        
-                        <!-- The list of sources appears first -->
-                        <ol id="sources-list" class="flex flex-col gap-3 mb-6 pb-6 border-b border-slate-300 list-decimal list-inside pl-2">
-                            <!-- Sources will be populated by JS -->
-                        </ol>
-
-                        <!-- Share Button and Summary -->
-                        <div class="flex justify-between items-center mb-3">
-                            <h4 class="text-lg font-semibold text-slate-800">Research Summary</h4>
-                            <button id="share-button" title="Share Results" class="hidden p-2 rounded-lg text-slate-500 hover:bg-slate-200 hover:text-blue-600 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                  <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
-                                </svg>
-                            </button>
+                <!-- Tab Content Panels -->
+                <div id="cialdini-content-container" class="py-6">
+                    <!-- Panel 1: Authority -->
+                    <div id="cialdini-authority" role="tabpanel" class="tab-panel">
+                        <div id="content-cialdini-authority" class="prose prose-lg max-w-none text-slate-700">
+                            <h3 class="font-bold text-slate-800">1. Definition: The Principle of Authority</h3>
+                            <p>People are conditioned to obey figures of authority. Scammers exploit this by impersonating individuals in positions of power (e.g., CEOs, IT administrators, police officers) to make their demands seem legitimate and non-negotiable.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">2. Example Scam: "CEO Fraud / Business Email Compromise"</h3>
+                            <p>An employee in finance receives an email that appears to come directly from the CEO. The email, marked "URGENT," demands an immediate, confidential wire transfer to a new "vendor." The employee, intimidated by the CEO's authority, bypasses normal procedures and sends the money, resulting in a direct financial loss.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">3. Preventive Measures & Recommendations</h3>
+                            <ul class="list-disc pl-6">
+                                <li>**Verify, Don't Trust:** Always verify high-stakes requests (like wire transfers) through a separate, known communication channel (e.g., call the person on their internal extension).</li>
+                                <li>**Clear Protocols:** Establish multi-factor approval processes for all financial transactions that cannot be bypassed by a single individual, regardless of their "authority."</li>
+                            </ul>
                         </div>
-                        
-                        <p id="summary-text" class="text-slate-700 whitespace-pre-wrap"></p>
-                        
-                        <!-- Copy to Clipboard Notification -->
-                        <div id="copy-notification" class="hidden text-sm text-green-600 font-medium text-right mt-4">
-                            Copied to clipboard!
+                        <footer class="mt-6 border-t pt-4">
+                            <div class="flex gap-2">
+                                <button class="action-button copy-btn" data-target="content-cialdini-authority"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
+                                <button class="action-button share-btn" data-target="content-cialdini-authority"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
+                        </footer>
+                    </div>
+                    <!-- Panel 2: Urgency (Scarcity) -->
+                    <div id="cialdini-urgency" role="tabpanel" class="tab-panel hidden">
+                        <div id="content-cialdini-urgency" class="prose prose-lg max-w-none text-slate-700">
+                            <h3 class="font-bold text-slate-800">1. Definition: The Principle of Scarcity (Urgency)</h3>
+                            <p>This principle suggests that people are more likely to act when they believe an opportunity is limited or that they are about to lose something. Scammers create a false sense of urgency to rush victims into making mistakes before they have time to think critically.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">2. Example Scam: "Password Expiration Notice"</h3>
+                            <p>An employee receives an email seemingly from "IT Support" with the subject line: "ACTION REQUIRED: Your Account Password Expires in 15 Minutes." The email states that failure to update will result in being locked out. It provides a link to a fake login page, resulting in credential theft (data loss).</p>
+                            <h3 class="font-bold text-slate-800 mt-4">3. Preventive Measures & Recommendations</h3>
+                            <ul class="list-disc pl-6">
+                                <li>**Be Suspicious of Pressure:** Treat any unexpected, urgent request with immediate suspicion. Legitimate organizations rarely give you a 15-minute deadline for critical actions.</li>
+                                <li>**Never Click Links in Emails:** Always navigate to official websites or internal portals by typing the address yourself.</li>
+                                <li>**MFA (Multi-Factor Authentication):** Enable MFA wherever possible.</li>
+                            </ul>
                         </div>
-
+                        <footer class="mt-6 border-t pt-4">
+                            <div class="flex gap-2">
+                                <button class="action-button copy-btn" data-target="content-cialdini-urgency"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
+                                <button class="action-button share-btn" data-target="content-cialdini-urgency"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
+                        </footer>
+                    </div>
+                    <!-- Panel 3: Liking -->
+                    <div id="cialdini-liking" role="tabpanel" class="tab-panel hidden">
+                        <div id="content-cialdini-liking" class="prose prose-lg max-w-none text-slate-700">
+                            <h3 class="font-bold text-slate-800">1. Definition: The Principle of Liking</h3>
+                            <p>People are more likely to comply with requests from those they know and like. Scammers exploit this by building rapport, claiming to have mutual friends, or using compliments (Liking) and claiming similarities (Familiarity) to lower a victim's guard before making their request.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">2. Example Scam: "LinkedIn / Social Media Phishing"</h3>
+                            <p>An attacker researches an employee on LinkedIn and finds they went to the same university. The attacker sends a connection request with a message: "Hi! I see we both graduated from [University Name]!" After the victim accepts, the attacker builds rapport before sending a link to a "helpful industry report," which is actually malware, resulting in a data breach.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">3. Preventive Measures & Recommendations</h3>
+                            <ul class="list-disc pl-6">
+                                <li>**Be Wary of Unsolicited Kindness:** Be cautious if a new, unsolicited contact quickly pivots to asking for information or for you to click a link.</li>
+                                <li>**Compartmentalize Information:** Be mindful of what information you share publicly on social media, as it can all be used to build a "Liking" or "Familiarity" profile for an attack.</li>
+                            </ul>
+                        </div>
+                        <footer class="mt-6 border-t pt-4">
+                            <div class="flex gap-2">
+                                <button class="action-button copy-btn" data-target="content-cialdini-liking"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
+                                <button class="action-button share-btn" data-target="content-cialdini-liking"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
+                        </footer>
+                    </div>
+                    <!-- Panel 4: Reciprocity -->
+                    <div id="cialdini-reciprocity" role="tabpanel" class="tab-panel hidden">
+                        <div id="content-cialdini-reciprocity" class="prose prose-lg max-w-none text-slate-700">
+                            <h3 class="font-bold text-slate-800">1. Definition: The Principle of Reciprocity</h3>
+                            <p>Humans feel indebted to those who do something for them. Attackers exploit this by offering something "free" or a "small favor" upfront (Quid Pro Quo). Once the victim accepts the "gift," the scammer makes their real request, and the victim feels a psychological obligation to comply.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">2. Example Scam: "Free USB Stick / Quid Pro Quo"</h3>
+                            <p>An attacker leaves several "lost" USB sticks labeled "Confidential 2025 Salaries" in the company parking lot. An employee finds one and plugs it into their work computer. The USB stick immediately executes malware, compromising the entire network. The "gift" of the USB stick led to a massive data breach.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">3. Preventive Measures & Recommendations</h3>
+                            <ul class="list-disc pl-6">
+                                <li>**Physical Security Policy:** Have a strict, clear-cut policy: **Never** plug in unknown or untrusted media (USBs, CDs, etc.) into a company device.</li>
+                                <li>**Reject Unsolicited "Gifts":** Train staff to be suspicious of unsolicited "free" offers online, whether they are "free reports" or physical items.</li>
+                            </ul>
+                        </div>
+                        <footer class="mt-6 border-t pt-4">
+                            <div class="flex gap-2">
+                                <button class="action-button copy-btn" data-target="content-cialdini-reciprocity"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
+                                <button class="action-button share-btn" data-target="content-cialdini-reciprocity"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
+                        </footer>
+                    </div>
+                    <!-- Panel 5: Consistency -->
+                    <div id="cialdini-consistency" role="tabpanel" class="tab-panel hidden">
+                        <div id="content-cialdini-consistency" class="prose prose-lg max-w-none text-slate-700">
+                            <h3 class="font-bold text-slate-800">1. Definition: The Principle of Consistency</h3>
+                            <p>People feel a strong desire to be consistent with what they have previously said or done. Attackers exploit this by first asking for a small, simple commitment (the "foot-in-the-door" technique). Once the victim agrees, the attacker follows up with a larger, related request, which the victim feels psychologically pressured to accept to remain consistent.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">2. Example Scam: "Fake Survey Scam"</h3>
+                            <p>An attacker, posing as a market researcher, asks an employee to take a "quick 30-second survey" about their remote work software. The questions are harmless. A week later, the same "researcher" calls back, thanks the employee for their past help (invoking consistency), and asks for a "small follow-up" to "confirm" their account details, including their username and password. The employee, already committed to being "helpful," complies.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">3. Preventive Measures & Recommendations</h3>
+                            <ul class="list-disc pl-6">
+                                <li>**Recognize the "Foot-in-the-Door":** Be aware that a small, innocuous request is often the setup for a larger, more malicious one.</li>
+                                <li>**It's OK to Say No:** Understand that you are not obligated to comply with a follow-up request, even if you complied with a smaller one.</li>
+                                <li>**Never Share Credentials:** Enforce a strict policy that no employee should ever share their password with anyone, including IT staff, for any reason.</li>
+                            </ul>
+                        </div>
+                        <footer class="mt-6 border-t pt-4">
+                            <div class="flex gap-2">
+                                <button class="action-button copy-btn" data-target="content-cialdini-consistency"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
+                                <button class="action-button share-btn" data-target="content-cialdini-consistency"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
+                        </footer>
+                    </div>
+                    <!-- Panel 6: Social Proof (Consensus) -->
+                    <div id="cialdini-social-proof" role="tabpanel" class="tab-panel hidden">
+                        <div id="content-cialdini-social-proof" class="prose prose-lg max-w-none text-slate-700">
+                            <h3 class="font-bold text-slate-800">1. Definition: The Principle of Social Proof</h3>
+                            <p>People will look to the actions and behaviors of others to determine their own, especially in situations of uncertainty. Scammers exploit this by creating the illusion of consensus, suggesting that "everyone else" is doing something (e.g., "all other employees have updated") to pressure the victim into complying.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">2. Example Scam: "Fake Software Update"</h3>
+                            <p>An attacker sends an email to a department, spoofing the IT department, with a link to a "new, mandatory software update." To build social proof, the attacker includes a fake testimonial: "I just installed this, it works great! - John S., Accounting." An employee, seeing that a colleague has "vouched" for it, trusts the link, clicks it, and installs malware.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">3. Preventive Measures & Recommendations</h3>
+                            <ul class="list-disc pl-6">
+                                <li>**Centralized Updates:** Establish that all legitimate software updates will *only* come through official, automated channels (like managed software centers), not through email links.</li>
+                                <li>**Verify Consensus:** Train employees that "everyone else is doing it" is a major red flag. Verify the request with the "source" (IT) or manager directly.</li>
+                                <li>**Question Testimonials:** Be wary of testimonials in emails that you cannot independently verify.</li>
+                            </ul>
+                        </div>
+                        <footer class="mt-6 border-t pt-4">
+                            <div class="flex gap-2">
+                                <button class="action-button copy-btn" data-target="content-cialdini-social-proof"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
+                                <button class="action-button share-btn" data-target="content-cialdini-social-proof"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
+                        </footer>
                     </div>
                 </div>
-            </div>
+            </section>
 
+            <!-- SECTION 3: NEW RESEARCH DASHBOARD -->
+            <section id="dashboard-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Research Dashboard</h2>
+                    <p class="text-slate-500">Key concepts from the source library (e.g., Eysenck, 1991; Burgoon & Buller, 1994).</p>
+                </div>
+
+                <!-- Tab Headers -->
+                <div class="border-b border-slate-200">
+                    <nav id="dashboard-tabs-container" class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
+                        <button role="tab" aria-selected="true" data-tab-target="dashboard-vulnerability" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Vulnerability Models</button>
+                        <button role="tab" aria-selected="false" data-tab-target="dashboard-deception" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Deception Cues</button>
+                        <button role="tab" aria-selected="false" data-tab-target="dashboard-trends" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Attack Trends</button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content Panels -->
+                <div id="dashboard-content-container" class="py-6">
+                    <!-- Panel 1: Vulnerability Models -->
+                    <div id="dashboard-vulnerability" role="tabpanel" class="tab-panel">
+                        <div id="content-dashboard-vulnerability" class="prose prose-lg max-w-none text-slate-700">
+                            <h3 class="font-bold text-slate-800">1. Personality Traits as Vulnerabilities</h3>
+                            <p>Personality theory suggests certain traits can be exploited. For example, Eysenck's (1991) P-E-N model includes **Psychoticism** (cold, aggressive, impulsive), **Extraversion** (sociable, assertive), and **Neuroticism** (anxious, emotional). An attacker might exploit high "Extraversion" and "Liking" or trigger "Neuroticism" (anxiety) with a "Fear/Loss Aversion" tactic.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">2. Manipulation Tactics in Relationships</h3>
+                            <p>Buss (1992) identified tactics used in close relationships that scammers mimic. These include **Coercion** (demands, threats), **Reason** (using logic, however flawed), and **Pleasure Induction** (promising rewards). An attacker might use "Pleasure Induction" by promising a "bonus" (Greed) or "Coercion" by "Intimidation."</P>
+                            <h3 class="font-bold text-slate-800 mt-4">3. Implications for Prevention</h3>
+                            <ul class="list-disc pl-6">
+                                <li>**Self-Awareness:** Understanding that innate personality traits (like being helpful or anxious) can be exploited is the first step in defense.</li>
+                                <li>**Training:** Security awareness can be tailored to show how different tactics (Coercion, Reason) map to common attacks (impersonation, phishing).</li>
+                            </ul>
+                        </div>
+                        <footer class="mt-6 border-t pt-4">
+                            <div class="flex gap-2">
+                                <button class="action-button copy-btn" data-target="content-dashboard-vulnerability"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
+                                <button class="action-button share-btn" data-target="content-dashboard-vulnerability"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Eysenck, H. J. (1991). Dimensions of personality: 16, 5 or 3?. *Personality and Individual Differences*, *12*(8), 773-790. & Buss, D. M. (1992). Manipulation in close relationships. *Journal of Personality and Social Psychology*, *63*(5), 780-798.</p>
+                        </footer>
+                    </div>
+                    <!-- Panel 2: Deception Cues -->
+                    <div id="dashboard-deception" role="tabpanel" class="tab-panel hidden">
+                        <div id="content-dashboard-deception" class="prose prose-lg max-w-none text-slate-700">
+                            <h3 class="font-bold text-slate-800">1. Interpersonal Deception Theory (IDT)</h3>
+                            <p>Burgoon & Buller (1994) explain that deception is an *interactive* process. Deceivers (scammers) must actively manage their image and behavior to appear credible. This can lead to "leakage" cues.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">2. Common Cues of Deception</h3>
+                            <p>While there is no single "Pinocchio" sign, IDT identifies patterns that can be red flags in a interaction (like a vishing call or phishing email):</p>
+                            <ul class="list-disc pl-6">
+                                <li>**Vagueness:** Deceivers are often uncertain and vague, offering fewer details than a truthful person would.</li>
+                                <li>**Nonimmediacy:** They may seem detached, using fewer "I" statements, and creating psychological distance.</li>
+                                <li>**Negative Affect:** Deception is stressful. The scammer may seem more tense, aroused, or display "non-composure" (e.g., being overly rigid or fidgety).</li>
+                                <li>**Image Management:** They may over-compensate by being *too* smooth or *too* polite, which can feel "off."</li>
+                            </ul>
+                            <h3 class="font-bold text-slate-800 mt-4">3. Preventive Measures & Recommendations</h3>
+                            <p>In a text-based scam (email/SMS), look for:
+                                <li>**Vagueness:** "An urgent matter with your account." (Which account? What matter?)</li>
+                                <li>**Nonimmediacy:** "It is required that this link is clicked." (Passive voice, no "I".)</li>
+                                <li>**Negative Affect (Pressure):** "Failure to comply will result in immediate suspension!" (A form of tension and intimidation).</li>
+                            </p>
+                        </div>
+                        <footer class="mt-6 border-t pt-4">
+                            <div class="flex gap-2">
+                                <button class="action-button copy-btn" data-target="content-dashboard-deception"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
+                                <button class="action-button share-btn" data-target="content-dashboard-deception"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Burgoon, J. K., & Buller, D. B. (1994). Interpersonal deception: III. Effects of deceit on perceived communication and nonverbal behavior dynamics. *Communication Monographs*, *61*(4), 303-325.</p>
+                        </footer>
+                    </div>
+                    <!-- Panel 3: Attack Trends -->
+                    <div id="dashboard-trends" role="tabpanel" class="tab-panel hidden">
+                        <div id="content-dashboard-trends" class="prose prose-lg max-w-none text-slate-700">
+                            <h3 class="font-bold text-slate-800">1. Understanding the Victim's Perspective</h3>
+                            <p>Online frauds are a major global problem. Research into victims (Button et al., 2014) shows they fall for scams for several reasons that overlap directly with psychological principles:</p>
+                            <ul class="list-disc pl-6">
+                                <li>**Authority & Legitimacy:** Scammers are effective at displaying "authority and legitimacy" (e.g., fake credentials, professional websites).</li>
+                                <li>**Visceral Appeals:** They use "visceral appeals" (e.g., "Fear/Loss Aversion" or "Attraction").</li>
+                                <li>**Pressure & Coercion:** Many victims report feeling pressured or coerced, which aligns with "Urgency" and "Intimidation."</li>
+                                <li>**Grooming:** Scammers build rapport over time, similar to Cialdini's "Liking" and "Consistency" principles.</li>
+                            </ul>
+                            <h3 class="font-bold text-slate-800 mt-4">2. The "Human" Element as the Weakest Link</h3>
+                            <p>Algarni et al. (2013) emphasize that social engineering's main goal is to "deceive and trick people to reveal critical information." This highlights that even with perfect technical defenses (firewalls, etc.), the human is often the target. Understanding this is key to building better defenses.</p>
+                            <h3 class="font-bold text-slate-800 mt-4">3. Future Trends: AI-Powered Attacks</h3>
+                            <p>While not in the 2013-2015 papers, a "future trend" is the use of AI to scale these attacks. AI can generate "Liking" (by mimicking writing styles) or "Urgency" (via deepfake "vishing") at a massive scale, making human-centric defenses more critical than ever.</p>
+                        </div>
+                        <footer class="mt-6 border-t pt-4">
+                            <div class="flex gap-2">
+                                <button class="action-button copy-btn" data-target="content-dashboard-trends"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
+                                <button class="action-button share-btn" data-target="content-dashboard-trends"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Button, M., et al. (2014). Online frauds: Learning from victims why they fall for these scams. *Australian & New Zealand Journal of Criminology*, *47*(3), 391-408. & Algarni, A., et al. (2013). Toward understanding social engineering. *Proceedings of the 8th International Conference on Legal, Security and Privacy Issues in IT Law.*</p>
+                        </footer>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: PDF SOURCE LIBRARY (Unchanged) -->
+            <section id="references-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">PDF Source Library</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- PDF Card 1 -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Algarni, A., et al. (2013). Toward understanding social engineering.</p>
+                            <p class="text-xs text-slate-500 truncate">Algarni et al_2013_Toward_Understanding_Social_Engineering.pdf</p>
+                        </div>
+                        <a href="Algarni et al_2013_Toward_Understanding_Social_Engineering.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+                    
+                    <!-- PDF Card 2 -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Bullée, J. W. H., et al. (2015). The persuasion and security awareness experiment.</p>
+                            <p class="text-xs text-slate-500 truncate">Bullee et al_2015_Persuasion and security awareness.pdf</p>
+                        </div>
+                        <a href="Bullee et al_2015_Persuasion and security awareness.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+
+                    <!-- PDF Card 3 -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Burgoon, J. K., & Buller, D. B. (1994). Interpersonal deception: III.</p>
+                            <p class="text-xs text-slate-500 truncate">Burgoon-Buller1994_Article_InterpersonalDeceptionIIIEffec.pdf</p>
+                        </div>
+                        <a href="Burgoon-Buller1994_Article_InterpersonalDeceptionIIIEffec.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+
+                    <!-- PDF Card 4 -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Buss, D. M. (1992). Manipulation in close relationships.</p>
+                            <p class="text-xs text-slate-500 truncate">Buss_1992_Manipulation in close relationships.pdf</p>
+                        </div>
+                        <a href="Buss_1992_Manipulation in close relationships.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+
+                    <!-- PDF Card 5 -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Button, M., et al. (2014). Online frauds: Learning from victims.</p>
+                            <p class="text-xs text-slate-500 truncate">Button et al_2014_Online frauds why victims fall for scams.pdf</p>
+                        </div>
+                        <a href="Button et al_2014_Online frauds why victims fall for scams.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+
+                    <!-- PDF Card 6 (Cialdini 2001) -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Cialdini, R. B. (2001). Harnessing the Science of Persuasion.</p>
+                            <p class="text-xs text-slate-500 truncate">Cialdini_2001_Harnessing the Scienceof Persuasion.pdf</p>
+                        </div>
+                        <a href="Cialdini_2001_Harnessing the Scienceof Persuasion.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+
+                    <!-- PDF Card 7 (Cialdini 2004) -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Cialdini, R. B. (2004). The science of persuasion.</p>
+                            <p class="text-xs text-slate-500 truncate">Cialdini_2004_The science of persuasion.pdf</p>
+                        </div>
+                        <a href="Cialdini_2004_The science of persuasion.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+                    
+                    <!-- PDF Card 8 -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Decety, J., & Jackson, P. L. (2004). The functional architecture of human empathy.</p>
+                            <p class="text-xs text-slate-500 truncate">Decety & Jackson_2004_Functional architecture of empathy.pdf</p>
+                        </div>
+                        <a href="Decety & Jackson_2004_Functional architecture of empathy.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+                    
+                    <!-- PDF Card 9 -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Schultz, D. P., & Schultz, S. E. (2009). Theories of Personality (Ninth Edition).</p>
+                            <p class="text-xs text-slate-500 truncate">Duane P. Schultz, Sydney Ellen Schultz Theories of Personality, Ninth Edition.pdf</p>
+                        </div>
+                        <a href="Duane P. Schultz, Sydney Ellen Schultz Theories of Personality, Ninth Edition.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+
+                    <!-- PDF Card 10 -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Eysenck, H. J. (1991). Dimensions of personality: 16, 5 or 3?</p>
+                            <p class="text-xs text-slate-500 truncate">Eysenck_1991_Dimensions of Personality.pdf</p>
+                        </div>
+                        <a href="Eysenck_1991_Dimensions of Personality.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+
+                </div>
+            </section>
         </main>
+    </div>
+
+    <!-- Global "Copied" Notification -->
+    <div id="copy-notification" class="hidden px-6 py-3 bg-slate-800 text-white text-sm font-medium rounded-full shadow-lg">
+        Content copied to clipboard!
     </div>
 
     <footer class="text-center text-slate-500 text-sm mt-8 pb-4">
         Copyrights 2025 Aniqa Afzal
     </footer>
 
-    <!-- *** NEW FEATURE ***: Modal for "Learn More" -->
-    <div id="factor-modal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-        <!-- Modal Overlay -->
-        <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
-        
-        <!-- Modal Content -->
-        <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-2xl z-10 transform scale-95">
-            <!-- Modal Header -->
-            <div class="flex justify-between items-center p-5 border-b border-slate-200">
-                <h3 id="modal-title" class="text-2xl font-bold text-slate-800">Factor Details</h3>
-                <button id="modal-close-button" class="text-slate-400 hover:text-slate-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- Modal Body -->
-            <div class="p-6 max-h-[70vh] overflow-y-auto">
-                <!-- Modal Loader -->
-                <div id="modal-loader" class="hidden items-center justify-center flex-col min-h-[200px]">
-                    <svg class="loader h-10 w-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9H4V4m.582 5H9m11.418 2a8.003 8.003 0 01-15.356-2H15m.582 5H19v5h-.582m-15.356-2A8.001 8.001 0 0019.418 15H20v5h-.582m-5.6-1.582A8.003 8.003 0 014.582 15H9"/>
-                    </svg>
-                    <p class="text-slate-500 mt-4">✨ Generating insights...</p>
-                </div>
-                <!-- Modal Content Area -->
-                <div id="modal-content-area" class="prose prose-slate max-w-none">
-                    <!-- AI-generated content will be injected here -->
-                </div>
-                 <!-- Modal Error -->
-                <div id="modal-error" class="hidden text-red-500 text-center"></div>
-            </div>
-        </div>
-    </div>
-    <!-- ************************ -->
-
-
-    <!-- 4. All JavaScript is now in-line at the end of the body -->
+    <!-- This script is now 100% API-FREE and safe for deployment -->
     <script>
         // --- (A) INTERNAL DATABASE LOGIC ---
-
         // --- (A.1) DATA PRE-LOADED FROM YOUR PDF ---
-        // This data is based on the "Psych factors.pdf"
         const sourceData = [
             { factorName: 'Multiple/unknown', percentage: 60 },
             { factorName: 'Authority', percentage: 59 },
@@ -239,7 +508,7 @@
             { factorName: 'Desire to help', percentage: 6 },
             { factorName: 'SSO, Data, Finance', percentage: 5 },
             { factorName: 'Opportunity', percentage: 4 },
-            { factorName:'Consistency', percentage: 4 },
+            { factorName: 'Consistency', percentage: 4 },
             { factorName: 'Utility', percentage: 4 }
         ];
 
@@ -250,9 +519,10 @@
         // --- (A.3) DOM Elements (Internal) ---
         const selectFactor = document.getElementById('select-factor');
         const resultPlaceholder = document.getElementById('result-placeholder');
+        const resultDisplay = document.getElementById('result-display'); // Parent display
         const resultValue = document.getElementById('result-value');
         const resultLabel = document.getElementById('result-label');
-        const learnMoreButton = document.getElementById('learn-more-button'); // New button
+        const resultBar = document.getElementById('result-bar'); // Bar graph element
         
         // --- (A.4) Initialization Function (Internal) ---
         function initializeInternalApp() {
@@ -260,7 +530,6 @@
             sourceData.sort((a, b) => a[keyFactor].localeCompare(b[keyFactor]));
             populateDropdown();
             selectFactor.addEventListener('change', findPercentage);
-            learnMoreButton.addEventListener('click', handleLearnMore); // New listener
         }
 
         /** (A.5) Populates the dropdown */
@@ -274,473 +543,186 @@
             });
         }
 
-        /** (A.7) Finds and displays the percentage */
+        /** (A.6) Finds and displays the percentage AND bar graph */
         function findPercentage() {
             const selectedValue = selectFactor.value;
             resultPlaceholder.classList.add('hidden');
-            resultValue.classList.add('hidden');
-            resultLabel.classList.add('hidden');
+            resultDisplay.classList.add('hidden');
             
             if (selectedValue === 'default') {
                 resultPlaceholder.classList.remove('hidden');
-                learnMoreButton.disabled = true; // Disable "Learn More" button
+                resultBar.style.width = '0%'; // Reset bar
                 return;
             }
-
-            learnMoreButton.disabled = false; // Enable "Learn More" button
             
             const match = sourceData.find(row => row[keyFactor] === selectedValue);
+            
             if (match) {
+                // Set values
                 resultValue.textContent = `${match[keyPercentage]}%`;
-                resultValue.classList.remove('hidden');
-                resultLabel.classList.remove('hidden');
+                resultBar.style.width = `${match[keyPercentage]}%`; // Set bar width
+                
+                // Show the results
+                resultDisplay.classList.remove('hidden');
             }
         }
         
-        // --- (B) LIVE WEB RESEARCH LOGIC ---
+        // --- (B) NEW REUSABLE TAB LOGIC ---
 
-        // --- (B.1) DOM Elements (External) ---
-        const searchInput = document.getElementById('search-input');
-        const searchButton = document.getElementById('search-button');
-        const loader = document.getElementById('loader');
-        const searchError = document.getElementById('search-error');
-        const searchPrompt = document.getElementById('search-prompt');
-        const searchResults = document.getElementById('search-results');
-        const summaryText = document.getElementById('summary-text');
-        const sourcesList = document.getElementById('sources-list');
-        const shareButton = document.getElementById('share-button');
+        /** (B.1) Initializes a single set of tabs */
+        function initializeTabs(tabContainerId, contentContainerId) {
+            const tabsContainer = document.getElementById(tabContainerId);
+            const contentContainer = document.getElementById(contentContainerId);
+            
+            if (!tabsContainer || !contentContainer) return;
+
+            const tabs = tabsContainer.querySelectorAll('[role="tab"]');
+            const tabPanels = contentContainer.querySelectorAll('[role="tabpanel"]');
+
+            tabsContainer.addEventListener('click', (e) => {
+                const clickedTab = e.target.closest('[role="tab"]');
+                if (!clickedTab) return;
+                
+                // Deactivate all tabs and hide all panels
+                tabs.forEach(tab => {
+                    tab.setAttribute('aria-selected', 'false');
+                    tab.classList.remove('border-blue-500', 'text-blue-700', 'font-semibold');
+                    tab.classList.add('border-transparent', 'text-slate-500');
+                });
+                tabPanels.forEach(panel => {
+                    panel.classList.add('hidden');
+                });
+
+                // Activate the clicked tab
+                clickedTab.setAttribute('aria-selected', 'true');
+                clickedTab.classList.add('border-blue-500', 'text-blue-700', 'font-semibold');
+                clickedTab.classList.remove('border-transparent', 'text-slate-500');
+
+                // Show the corresponding panel
+                const panelId = clickedTab.getAttribute('data-tab-target');
+                const correspondingPanel = document.getElementById(panelId);
+                if (correspondingPanel) {
+                    correspondingPanel.classList.remove('hidden');
+                }
+            });
+
+            // Set the first tab as active by default
+            if(tabs.length > 0) {
+                tabs[0].setAttribute('aria-selected', 'true');
+                tabs[0].classList.add('border-blue-500', 'text-blue-700', 'font-semibold');
+                tabs[0].classList.remove('border-transparent', 'text-slate-500');
+            }
+            if (tabPanels.length > 0) {
+                tabPanels[0].classList.remove('hidden');
+            }
+        }
+        
+        // --- (C) NEW COPY & SHARE LOGIC ---
+        
         const copyNotification = document.getElementById('copy-notification');
 
-        // --- (B.2) Event Listeners (External) ---
-        searchButton.addEventListener('click', handleSearch);
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleSearch();
-            }
-        });
+        /** (C.1) Handles all copy button clicks */
+        function handleCopyClick(e) {
+            const copyButton = e.target.closest('.copy-btn');
+            if (!copyButton) return;
 
-        /** (B.3) Main search handler */
-        async function handleSearch() {
-            const query = searchInput.value.trim();
-            if (!query) return;
+            const targetId = copyButton.getAttribute('data-target');
+            const contentElement = document.getElementById(targetId);
+            if (!contentElement) return;
 
-            // Reset UI
-            showLoading(true);
-            showError(null);
-            showResults(false);
-            searchPrompt.classList.add('hidden');
-            copyNotification.classList.add('hidden');
-            shareButton.classList.add('hidden'); // Hide share button on new search
-
-            try {
-                // This function already uses the Gemini API (with Google Search)
-                const response = await callGeminiAPI(query); 
-
-                if (response.text || (response.sources && response.sources.length > 0)) {
-                    displayResults(response.text, response.sources);
-                } else {
-                    showError('No relevant results found for this specific query.');
-                }
-            } catch (error) {
-                console.error('Search failed:', error);
-                showError(error.message || 'Failed to fetch results. Please try again.');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        /** (B.4) Calls the Gemini API directly (for Preview environment) */
-        async function callGeminiAPI(query) {
-            // This empty key works in the "Preview" but will
-            // FAIL when you deploy to Netlify.
-            const apiKey = ""; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-            // This system prompt instructs the AI to act as an academic researcher
-            const systemPrompt = `You are an academic cybersecurity research assistant.
-            Your purpose is to find and summarize scholarly articles, conference papers, and reports from known cybersecurity institutions (e.g., NIST, ENISA, ACM, IEEE).
-            You MUST follow these rules:
-            1.  Your summary MUST be a direct synthesis of the information found in the provided Google Search sources.
-            2.  **This is the most important rule:** You MUST cite your sources using inline notations like [Source 1], [Source 2], etc.
-            3.  Each notation must correspond to the numbered source in the 'Grounded Sources' list.
-            4.  **When listing sources:** Prioritize academic papers and official reports. If a source is from a known academic database (e.g., 'ACM Digital Library', 'IEEE Xplore', 'Springer') or institution ('NIST', 'ENISA'), you MUST name it in the source title.
-            5.  Example of a good source title: "[IEEE Xplore] A new framework for deepfake detection."
-            6.  If no academic sources are found, you may use high-quality, reputable news reports as a secondary option.
-            7.  Focus on:
-                a) Clear definitions of psychological factors.
-                b) Specific cases of financial or data loss from these attacks.`;
-
-
-            const payload = {
-                contents: [{ parts: [{ text: query }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                tools: [{ "google_search": {} }] // Enable Google Search grounding
-            };
-
-            let retries = 3;
-            let delay = 1000;
-
-            while (retries > 0) {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (response.status === 429 || (response.status >= 500 && response.status < 600)) {
-                        throw new Error(`Server error (status ${response.status}). Retrying...`);
-                    }
-
-                    if (!response.ok) {
-                        const errorBody = await response.json();
-                        throw new Error(`API Error: ${errorBody.error?.message || response.statusText}`);
-                    }
-
-                    const result = await response.json();
-                    return processApiResponse(result);
-
-                } catch (error) {
-                    console.warn(error.message);
-                    retries--;
-                    if (retries === 0) throw error;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
-                }
+            const textToCopy = contentElement.innerText;
+            
+            // Use Clipboard API if available (secure, modern)
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showCopyNotification("Content copied to clipboard!");
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    legacyCopyToClipboard(textToCopy); // Fallback
+                });
+            } else {
+                legacyCopyToClipboard(textToCopy); // Fallback for older browsers
             }
         }
         
-        /** (B.5) Processes the raw API response (from our function) */
-        function processApiResponse(result) {
-            const candidate = result.candidates?.[0];
-            if (!candidate) {
-                if (result.promptFeedback && result.promptFeedback.blockReason) {
-                    throw new Error(`Query blocked: ${result.promptFeedback.blockReason}`);
-                }
-                throw new Error('Invalid API response structure.');
-            }
-            
-            if (candidate.finishReason === 'SAFETY' || candidate.finishReason === 'RECITATION') {
-                 throw new Error('Response blocked for safety or recitation reasons.');
-            }
-            
-            const text = candidate.content?.parts?.[0]?.text || null;
-            let sources = [];
-            const metadata = candidate.groundingMetadata;
-            
-            if (metadata && metadata.groundingAttributions) {
-                sources = metadata.groundingAttributions
-                    .map(attr => ({
-                        uri: attr.web?.uri,
-                        title: attr.web?.title
-                    }))
-                    .filter(source => source.uri && source.title);
-            }
-            
-            return { text, sources };
-        }
-
-        /** (B.6) Displays the results in the UI */
-        function displayResults(summary, sources) {
-            sourcesList.innerHTML = ''; // Clear old sources
-            if (sources.length > 0) {
-                sources.forEach((source, i) => {
-                    const li = document.createElement('li');
-                    li.className = "p-3 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors ml-4"; 
-                    
-                    const a = document.createElement('a');
-                    a.href = source.uri;
-                    a.target = "_blank";
-                    a.rel = "noopener noreferrer";
-                    a.className = "flex items-center gap-3";
-                    
-                    const icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                                  </svg>`;
-                    
-                    const textDiv = document.createElement('div');
-                    const titleP = document.createElement('p');
-                    titleP.className = "text-sm font-medium text-blue-700 truncate";
-                    // The AI prompt will now try to add text like "[IEEE Xplore]" to the title string
-                    titleP.textContent = source.title; 
-                    
-                    const uriP = document.createElement('p');
-                    uriP.className = "text-xs text-slate-500 truncate";
-                    uriP.textContent = source.uri;
-                    
-                    textDiv.appendChild(titleP);
-                    textDiv.appendChild(uriP);
-                    a.innerHTML = icon;
-                    a.appendChild(textDiv);
-                    li.appendChild(a);
-                    sourcesList.appendChild(li);
-                });
-            } else {
-                // REVISION: This is now blank, as requested.
-                sourcesList.innerHTML = '';
-            }
-
-            // Display summary
-            if (summary) {
-                summaryText.textContent = summary;
-                summaryText.classList.remove('hidden');
-            } else {
-                summaryText.textContent = 'No summary was generated, but you can review the sources above.';
-                summaryText.classList.remove('hidden');
-            }
-
-            shareButton.classList.remove('hidden'); // Show the share button
-            
-            // Assign click handler for Share Button
-            shareButton.onclick = () => {
-                shareResults(summary, sources, searchInput.value);
-            };
-
-            showResults(true);
-        }
-
-        /** (B.7) Share Results Function */
-        function shareResults(summary, sources, query) {
-            const shareTitle = `Research: ${query}`;
-            const shareURL = window.location.href; 
-            const summarySnippet = summary ? `${summary.substring(0, 200)}...` : 'Check out this research';
-            
-            let sourcesText = sources.map((s, i) => `[Source ${i+1}] ${s.title}: ${s.uri}`).join('\n');
-            const fullTextReport = `Research on: "${query}"\n\nResearch Summary:\n${summary || 'N/A'}\n\nGrounded Sources:\n${sourcesText}\n\nFound via Cybersecurity Factor Database: ${shareURL}`;
-            
-            if (navigator.share) {
-                // Use Web Share API (Mobile)
-                navigator.share({
-                    title: shareTitle,
-                    text: `${summarySnippet}\n\More:`,
-                    url: shareURL,
-                })
-                .catch((error) => console.log('Error sharing:', error));
-            } else {
-                // Fallback to Clipboard (Desktop)
-                copyToClipboard(fullTextReport);
-            }
-        }
-
-        /** (B.8) Copy to Clipboard Utility */
-        function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'absolute';
-            textarea.style.left = '-9999px';
-            document.body.appendChild(textarea);
-            textarea.select();
+        /** (C.2) Fallback copy method */
+        function legacyCopyToClipboard(text) {
+             const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed'; // Hide it
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
             try {
                 document.execCommand('copy');
-                copyNotification.classList.remove('hidden');
-                setTimeout(() => {
-                    copyNotification.classList.add('hidden');
-                }, 2000);
+                showCopyNotification("Content copied to clipboard!");
             } catch (err) {
-                console.error('Failed to copy to clipboard:', err);
+                console.error('Legacy copy failed: ', err);
+                showCopyNotification("Copy failed. Please copy manually.", true);
             }
-            document.body.removeChild(textarea);
+            document.body.removeChild(textArea);
         }
 
-        // --- (B.9) UI Helper Functions ---
-        function showLoading(isLoading) {
-            if (isLoading) {
-                loader.classList.remove('hidden');
-                loader.classList.add('flex');
-            } else {
-                loader.classList.add('hidden');
-                loader.classList.remove('flex');
-            }
-        }
+        /** (C.3) Handles all share button clicks */
+        async function handleShareClick(e) {
+            const shareButton = e.target.closest('.share-btn');
+            if (!shareButton) return;
 
-        function showError(message) {
-            if (message) {
-                searchError.querySelector('p').textContent = message;
-                searchError.classList.remove('hidden');
-                searchError.classList.add('flex');
-            } else {
-                searchError.classList.add('hidden');
-                searchError.classList.remove('flex');
-            }
-        }
+            const targetId = shareButton.getAttribute('data-target');
+            const contentElement = document.getElementById(targetId);
+            if (!contentElement) return;
 
-        function showResults(shouldShow) {
-            if (shouldShow) {
-                searchResults.classList.remove('hidden');
-            } else {
-                searchResults.classList.add('hidden');
-            }
-        }
+            const textToShare = contentElement.innerText;
+            const shareTitle = "Research Note: Psychological Factors in SE";
 
-
-        // --- (C) *** NEW FEATURE ***: MODAL & GENERATIVE AI LOGIC ---
-
-        // --- (C.1) Modal DOM Elements ---
-        const modal = document.getElementById('factor-modal');
-        const modalOverlay = document.getElementById('modal-overlay');
-        const modalCloseButton = document.getElementById('modal-close-button');
-        const modalTitle = document.getElementById('modal-title');
-        const modalContent = document.getElementById('modal-content-area');
-        const modalLoader = document.getElementById('modal-loader');
-        const modalError = document.getElementById('modal-error');
-
-        // --- (C.2) Modal Event Listeners ---
-        modalCloseButton.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', closeModal);
-
-        /** (C.3) Opens and populates the modal */
-        function openModal() {
-            const factorName = selectFactor.value;
-            if (factorName === 'default') return;
-
-            modalTitle.textContent = factorName;
-            modalContent.innerHTML = ''; // Clear old content
-            modalError.classList.add('hidden'); // Hide old errors
-            modalLoader.classList.remove('hidden'); // Show loader
-            modalLoader.classList.add('flex');
-            modal.classList.remove('hidden');
-            
-            // Animate in
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.querySelector('.modal-content').classList.remove('scale-95');
-            }, 10);
-        }
-
-        /** (C.4) Closes the modal */
-        function closeModal() {
-            modal.classList.add('opacity-0');
-            modal.querySelector('.modal-content').classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 250); // Wait for animation
-        }
-
-        /** (C.5) Main handler for the "Learn More" button */
-        async function handleLearnMore() {
-            openModal(); // Open modal and show loader
-            const factorName = selectFactor.value;
-
-            try {
-                // Call the new Gemini function
-                const details = await callGeminiForDetails(factorName);
-                
-                // Format and display the structured data
-                const html = `
-                    <h4 class="text-xl font-bold text-slate-800 mb-2">Definition</h4>
-                    <p class="text-slate-700 mb-5">${details.definition}</p>
-                    
-                    <h4 class="text-xl font-bold text-slate-800 mb-2">Example Attack Scenario</h4>
-                    <pre class="bg-slate-100 p-4 rounded-lg text-slate-800 whitespace-pre-wrap font-sans mb-5">${details.example}</pre>
-                    
-                    <h4 class="text-xl font-bold text-slate-800 mb-2">Defense Tips</h4>
-                    <ul class="list-disc list-inside text-slate-700 space-y-2">
-                        ${details.defense_tips.map(tip => `<li>${tip}</li>`).join('')}
-                    </ul>
-                `;
-                modalContent.innerHTML = html;
-
-            } catch (error) {
-                console.error('Failed to generate details:', error);
-                modalError.textContent = `Failed to generate insights: ${error.message}`;
-                modalError.classList.remove('hidden');
-            } finally {
-                modalLoader.classList.add('hidden');
-                modalLoader.classList.remove('flex');
-            }
-        }
-
-        /** (C.6) New LLM Call: Generates details for a factor */
-        async function callGeminiForDetails(factorName) {
-            const apiKey = ""; // Same key, works in Preview
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-            // 1. Define the System Prompt
-            const systemPrompt = `You are a cybersecurity training expert. 
-            You provide clear, concise, and helpful information.
-            The user will provide a psychological factor.
-            You MUST respond ONLY with a JSON object matching the requested schema.`;
-
-            // 2. Define the User Prompt
-            const userPrompt = `For the social engineering principle "${factorName}", please provide:
-            1.  A brief 'definition' (1-2 sentences).
-            2.  A realistic 'example' attack scenario (as a short paragraph, email, or script).
-            3.  A list of 3-5 scannable 'defense_tips' for an end-user.`;
-            
-            // 3. Define the JSON Schema we want the LLM to return
-            const schema = {
-                type: "OBJECT",
-                properties: {
-                    "definition": { "type": "STRING" },
-                    "example": { "type": "STRING" },
-                    "defense_tips": {
-                        "type": "ARRAY",
-                        "items": { "type": "STRING" }
-                    }
-                },
-                required: ["definition", "example", "defense_tips"]
-            };
-
-            // 4. Construct the Payload
-            const payload = {
-                contents: [
-                    { role: "user", parts: [{ text: userPrompt }] }
-                ],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: schema,
-                    temperature: 0.5 // A little creative for the example
-                }
-            };
-
-            // 5. Make the API Call (with retries)
-            let retries = 3;
-            let delay = 1000;
-
-            while (retries > 0) {
+            // Use Web Share API if available (mobile)
+            if (navigator.share) {
                 try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                    await navigator.share({
+                        title: shareTitle,
+                        text: textToShare,
                     });
-
-                    if (response.status === 429 || (response.status >= 500 && response.status < 600)) {
-                        throw new Error(`Server error (status ${response.status}). Retrying...`);
-                    }
-
-                    if (!response.ok) {
-                        const errorBody = await response.json();
-                        throw new Error(`API Error: ${errorBody.error?.message || response.statusText}`);
-                    }
-
-                    const result = await response.json();
-
-                    // 6. Parse the JSON response
-                    const candidate = result.candidates?.[0];
-                    if (candidate && candidate.content?.parts?.[0]?.text) {
-                        return JSON.parse(candidate.content.parts[0].text);
-                    } else {
-                        throw new Error("Invalid response structure from generative API.");
-                    }
-
-                } catch (error) {
-                    console.warn(error.message);
-                    retries--;
-                    if (retries === 0) throw error;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
+                } catch (err) {
+                    console.error('Share failed:', err);
                 }
+            } else {
+                // Fallback for desktop: copy to clipboard
+                legacyCopyToClipboard(textToShare);
             }
+        }
+
+        /** (C.4) Shows the "Copied!" notification */
+        function showCopyNotification(message, isError = false) {
+            copyNotification.textContent = message;
+            if (isError) {
+                copyNotification.classList.remove('bg-slate-800');
+                copyNotification.classList.add('bg-red-600');
+            } else {
+                copyNotification.classList.add('bg-slate-800');
+                copyNotification.classList.remove('bg-red-600');
+            }
+            
+            copyNotification.classList.remove('hidden');
+            setTimeout(() => {
+                copyNotification.classList.add('hidden');
+            }, 2500);
         }
 
 
         // --- (D) INITIALIZE THE APP ---
-        document.addEventListener('DOMContentLoaded', initializeInternalApp);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize all app components
+            initializeInternalApp();
+            
+            // Initialize both tab sections
+            initializeTabs('cialdini-tabs-container', 'cialdini-content-container');
+            initializeTabs('dashboard-tabs-container', 'dashboard-content-container');
+
+            // Add global click listeners for copy/share
+            document.body.addEventListener('click', handleCopyClick);
+            document.body.addEventListener('click', handleShareClick);
+        });
 
     </script>
 </body>
