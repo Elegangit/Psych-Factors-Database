@@ -74,27 +74,6 @@
         .slide-down.open {
             max-height: 500px; /* arbitrary large value */
         }
-        /* Styling for the new results table (no longer used, but kept in case) */
-        #trends-result-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
-        }
-        #trends-result-table th, #trends-result-table td {
-            text-align: left;
-            padding: 12px 16px;
-            border-bottom: 1px solid #e2e8f0; /* slate-200 */
-        }
-        #trends-result-table th {
-            background-color: #f8fafc; /* slate-50 */
-            font-weight: 600;
-            color: #334155; /* slate-700 */
-            width: 30%;
-        }
-        #trends-result-table td {
-            color: #1e293b; /* slate-800 */
-            font-weight: 500;
-        }
     </style>
     <!-- Import Inter font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -110,6 +89,11 @@
                 Psychological Factors and their influence in Social Engineering based on Undetected Vulnerabilities
             </h1>
             <p class="text-slate-500 text-center mt-2 text-lg">An Internal Database & Research Tool</p>
+            
+            <!-- NEW: Introductory Paragraph -->
+            <p class="text-base text-slate-600 max-w-3xl mx-auto text-center mt-6">
+                Psychological factors not only contribute and influence social engineering attacks, their percentages taken from 20 years of data from several countries, have shown attack types evolve and target human vulnerabilities more than procedural ones, where impersonation, phishing and pretexting are influencing more towards increase in such attacks.
+            </p>
         </header>
 
         <main class="flex flex-col gap-8">
@@ -146,8 +130,58 @@
                     </div>
                 </div>
             </section>
+            
+            <!-- SECTION 2: REBUILT GLOBAL TRENDS DATABASE (MOVED UP) -->
+            <section id="trends-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Global Trends of Evolving Social Engineering</h2>
+                    <p class="text-slate-500 mb-4">by the Cyber Secure Behavior Lab at UMBC</p>
+                    <p class="text-slate-500">Analyze pre-loaded incident data from your research (1968-2025).</p>
+                </div>
+                
+                <!-- Database Controls (Reverted to 2-dropdown system) -->
+                <fieldset id="trends-controls" class="mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="trends-category-select" class="block text-lg font-medium text-slate-700 mb-3">1. Select Category to Analyze</label>
+                            <select id="trends-category-select" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
+                                <option value="default">Select category...</option>
+                                <!-- JS will populate this -->
+                            </select>
+                        </div>
+                        <div>
+                            <label for="trends-value-select" class="block text-lg font-medium text-slate-700 mb-3">2. Select Value</label>
+                            <select id="trends-value-select" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" disabled>
+                                <option value="default">...</option>
+                                <!-- JS will populate this -->
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <!-- Trends Result Display (Styled like Section 1) -->
+                <div class="flex-grow flex flex-col justify-center p-8 min-h-[150px] bg-gradient-to-br from-slate-700 to-slate-900 rounded-lg shadow-xl">
+                    <div id="trends-result-placeholder" class="text-slate-300 text-xl text-center">Please select a category and value</div>
 
-            <!-- SECTION 2: CIALDINI'S 6 PRINCIPLES OF PERSUASION -->
+                    <div id="trends-result-display" class="hidden">
+                        <!-- Main percentage display -->
+                        <div class="text-center">
+                            <div id="trends-result-value" class="text-white font-extrabold text-7xl md:text-8xl"></div>
+                            <div id="trends-result-label" class="text-slate-300 text-lg font-medium mt-1"></div>
+                        </div>
+                        
+                        <!-- Bar Graph Visualization -->
+                        <div class="mt-6 px-4">
+                            <p class="text-white/90 text-sm font-medium mb-2">Percent of Total Incidents</p>
+                            <div class="w-full bg-slate-600/50 rounded-full h-4 shadow-inner overflow-hidden">
+                                <div id="trends-result-bar" class="bg-white h-4 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: CIALDINI'S 6 PRINCIPLES OF PERSUASION -->
             <section id="cialdini-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-slate-800">Cialdini's 6 Principles of Persuasion</h2>
@@ -300,7 +334,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 3: NEW RESEARCH DASHBOARD -->
+            <!-- SECTION 4: NEW RESEARCH DASHBOARD -->
             <section id="dashboard-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-slate-800">Research Dashboard</h2>
@@ -394,57 +428,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 4: REVERTED GLOBAL TRENDS DATABASE (PRE-LOADED) -->
-            <section id="trends-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Global Trends of Evolving Social Engineering</h2>
-                    <p class="text-slate-500 mb-4">by the Cyber Secure Behavior Lab at UMBC</p>
-                    <p class="text-slate-500">Analyze pre-loaded incident data from your research (1968-2025).</p>
-                </div>
-                
-                <!-- Database Controls (Reverted to 2-dropdown system) -->
-                <fieldset id="trends-controls" class="mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="trends-category-select" class="block text-lg font-medium text-slate-700 mb-3">1. Select Category to Analyze</label>
-                            <select id="trends-category-select" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
-                                <option value="default">Select category...</option>
-                                <!-- JS will populate this -->
-                            </select>
-                        </div>
-                        <div>
-                            <label for="trends-value-select" class="block text-lg font-medium text-slate-700 mb-3">2. Select Value</label>
-                            <select id="trends-value-select" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" disabled>
-                                <option value="default">...</option>
-                                <!-- JS will populate this -->
-                            </select>
-                        </div>
-                    </div>
-                </fieldset>
-                
-                <!-- Trends Result Display (Styled like Section 1) -->
-                <div class="flex-grow flex flex-col justify-center p-8 min-h-[150px] bg-gradient-to-br from-slate-700 to-slate-900 rounded-lg shadow-xl">
-                    <div id="trends-result-placeholder" class="text-slate-300 text-xl text-center">Please select a category and value</div>
-
-                    <div id="trends-result-display" class="hidden">
-                        <!-- Main percentage display -->
-                        <div class="text-center">
-                            <div id="trends-result-value" class="text-white font-extrabold text-7xl md:text-8xl"></div>
-                            <div id="trends-result-label" class="text-slate-300 text-lg font-medium mt-1"></div>
-                        </div>
-                        
-                        <!-- Bar Graph Visualization -->
-                        <div class="mt-6 px-4">
-                            <p class="text-white/90 text-sm font-medium mb-2">Percent of Total Incidents</p>
-                            <div class="w-full bg-slate-600/50 rounded-full h-4 shadow-inner overflow-hidden">
-                                <div id="trends-result-bar" class="bg-white h-4 rounded-full" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 5: PDF SOURCE LIBRARY (With "Add New" Feature) -->
+            <!-- SECTION 5: PDF SOURCE LIBRARY (With "Add New" Feature & FIXED LINKS) -->
             <section id="references-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
                 <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
                     <div>
@@ -476,90 +460,116 @@
                 </div>
 
                 <div id="references-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- PDF Card 1 (Original) -->
+                    <!-- PDF Card 1 (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
                             <p class="font-medium text-slate-800 text-sm truncate">Algarni, A., et al. (2013). Toward understanding social engineering.</p>
-                            <p class="text-xs text-slate-500 truncate">Algarni et al_2013_Toward_Understanding_Social_Engineering.pdf</p>
+                            <p class="text-xs text-slate-500 truncate">eprints.qut.edu.au</p>
                         </div>
-                        <a href="Algarni et al_2013_Toward_Understanding_Social_Engineering.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://eprints.qut.edu.au/67479/1/67479.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
                     
-                    <!-- PDF Card 2 (Original) -->
+                    <!-- PDF Card 2 (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
                             <p class="font-medium text-slate-800 text-sm truncate">Bullée, J. W. H., et al. (2015). The persuasion and security awareness experiment.</p>
-                            <p class="text-xs text-slate-500 truncate">Bullee et al_2015_Persuasion and security awareness.pdf</p>
+                            <p class="text-xs text-slate-500 truncate">link.springer.com</p>
                         </div>
-                        <a href="Bullee et al_2015_Persuasion and security awareness.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://link.springer.com/content/pdf/10.1007/s11292-014-9222-7.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-                    <!-- ... Other 8 original PDF cards ... -->
+
+                    <!-- PDF Card 3 (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
-                            <p class="font-medium text-slate-800 text-sm truncate">Burgoon, J. K., & Buller, D. B. (1994).</p>
-                            <p class="text-xs text-slate-500 truncate">Burgoon-Buller1994_Article_InterpersonalDeceptionIIIEffec.pdf</p>
+                            <p class="font-medium text-slate-800 text-sm truncate">Burgoon, J. K., & Buller, D. B. (1994). Interpersonal deception: III.</p>
+                            <p class="text-xs text-slate-500 truncate">researchgate.net</p>
                         </div>
-                        <a href="Burgoon-Buller1994_Article_InterpersonalDeceptionIIIEffec.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://www.researchgate.net/profile/Judee-Burgoon/publication/232478794_Interpersonal_Deception_III_Effects_of_Deceit_on_Perceived_Communication_and_Nonverbal_Behavior_Dynamics/links/5a7f2a89a6fdcc53fe30419c/Interpersonal-Deception-III-Effects-of-Deceit-on-Perceived-Communication-and-Nonverbal-Behavior-Dynamics.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
+
+                    <!-- PDF Card 4 (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
                             <p class="font-medium text-slate-800 text-sm truncate">Buss, D. M. (1992). Manipulation in close relationships.</p>
-                            <p class="text-xs text-slate-500 truncate">Buss_1992_Manipulation in close relationships.pdf</p>
+                            <p class="text-xs text-slate-500 truncate">researchgate.net</p>
                         </div>
-                        <a href="Buss_1992_Manipulation in close relationships.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://www.researchgate.net/profile/David-Buss/publication/232569588_Manipulation_in_Close_Relationships_Five_Personality_Factors_in_Interactional_Context/links/5b982637a6fdccd3cb5c1e54/Manipulation-in-Close-Relationships-Five-Personality-Factors-in-Interactional-Context.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
+
+                    <!-- PDF Card 5 (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
                             <p class="font-medium text-slate-800 text-sm truncate">Button, M., et al. (2014). Online frauds: Learning from victims.</p>
-                            <p class="text-xs text-slate-500 truncate">Button et al_2014_Online frauds why victims fall for scams.pdf</p>
+                            <p class="text-xs text-slate-500 truncate">researchgate.net</p>
                         </div>
-                        <a href="Button et al_2014_Online frauds why victims fall for scams.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://www.researchgate.net/profile/Mark-Button/publication/271709400_Online_frauds_Learning_from_victims_why_they_fall_for_these_scams/links/54d9c7500cf25422405d7616/Online-frauds-Learning-from-victims-why-they-fall-for-these-scams.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
+
+                    <!-- PDF Card 6 (Cialdini 2001) (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
                             <p class="font-medium text-slate-800 text-sm truncate">Cialdini, R. B. (2001). Harnessing the Science of Persuasion.</p>
-                            <p class="text-xs text-slate-500 truncate">Cialdini_2001_Harnessing the Scienceof Persuasion.pdf</p>
+                            <p class="text-xs text-slate-500 truncate">gvsu.edu</p>
                         </div>
-                        <a href="Cialdini_2001_Harnessing the Scienceof Persuasion.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://www.gvsu.edu/cms4/asset/F56361FE-F32C-87F8-2325A61DCD71A1C3/cialdini_harnessing_the_science_of_persuasion.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
+
+                    <!-- PDF Card 7 (Cialdini 2004) (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
                             <p class="font-medium text-slate-800 text-sm truncate">Cialdini, R. B. (2004). The science of persuasion.</p>
-                            <p class="text-xs text-slate-500 truncate">Cialdini_2004_The science of persuasion.pdf</p>
+                            <p class="text-xs text-slate-500 truncate">social-engineer.org</p>
                         </div>
-                        <a href="Cialdini_2004_The science of persuasion.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://www.social-engineer.org/wp-content/uploads/2018/03/The-Science-of-Persuasion.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
+                    
+                    <!-- PDF Card 8 (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
-                            <p class="font-medium text-slate-800 text-sm truncate">Decety, J., & Jackson, P. L. (2004).</p>
-                            <p class="text-xs text-slate-500 truncate">Decety & Jackson_2004_Functional architecture of empathy.pdf</p>
+                            <p class="font-medium text-slate-800 text-sm truncate">Decety, J., & Jackson, P. L. (2004). The functional architecture of human empathy.</p>
+                            <p class="text-xs text-slate-500 truncate">researchgate.net</p>
                         </div>
-                        <a href="Decety & Jackson_2004_Functional architecture of empathy.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://www.researchgate.net/profile/Philip-Jackson-8/publication/8627138_The_Functional_Architecture_of_Human_Empathy/links/09e4150de19036f0e4000000/The-Functional-Architecture-of-Human-Empathy.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
+                    
+                    <!-- PDF Card 9 (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
-                            <p class="font-medium text-slate-800 text-sm truncate">Schultz, D. P., & Schultz, S. E. (2009).</p>
-                            <p class="text-xs text-slate-500 truncate">Duane P. Schultz, Sydney Ellen Schultz Theories of Personality, Ninth Edition.pdf</p>
+                            <p class="font-medium text-slate-800 text-sm truncate">Schultz, D. P., & Schultz, S. E. (2009). Theories of Personality (Ninth Edition).</p>
+                            <p class="text-xs text-slate-500 truncate">cengage.com</p>
                         </div>
-                        <a href="Duane P. Schultz, Sydney Ellen Schultz Theories of Personality, Ninth Edition.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://www.cengage.com/c/theories-of-personality-10e-schultz/9781305652958/" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
+
+                    <!-- PDF Card 10 (FIXED) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
-                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.IS-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
                             <p class="font-medium text-slate-800 text-sm truncate">Eysenck, H. J. (1991). Dimensions of personality: 16, 5 or 3?</p>
-                            <p class="text-xs text-slate-500 truncate">Eysenck_1991_Dimensions of Personality.pdf</p>
+                            <p class="text-xs text-slate-500 truncate">sciencedirect.com</p>
                         </div>
-                        <a href="Eysenck_1991_Dimensions of Personality.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                        <a href="https://www.researchgate.net/profile/Hans-Eysenck/publication/222372767_Dimensions_of_personality_16_5_or_3-Criteria_for_a_taxonomic_paradigm/links/0c960516599298c919000000/Dimensions-of-personality-16-5-or-3-Criteria-for-a-taxonomic-paradigm.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
+
+                    <!-- PDF Card 11 (NEWLY ADDED & FIXED) -->
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <div class="flex-grow overflow-hidden">
+                            <p class="font-medium text-slate-800 text-sm truncate">Bray, T. (2006). The Training Design Manual.</p>
+                            <p class="text-xs text-slate-500 truncate">koganpage.com</p>
+                        </div>
+                        <a href="https://www.koganpage.com/product/the-training-design-manual-9780749446213" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                    </div>
+
                     <!-- Dynamically added PDFs will appear here -->
                 </div>
                 <button id="clear-local-sources-btn" class="text-sm text-slate-500 hover:text-red-600 transition-colors mt-4 hidden">Clear Added Sources</button>
@@ -754,6 +764,7 @@
         
         const TOTAL_INCIDENTS = 286; // Based on your CSV file (approx 286 rows of data)
 
+        // Data for "Psychological Factor"
         const trendsPsychFactorData = [
             { name: "Authority", count: 122 }, { name: "Urgency", count: 91 },
             { name: "Liking", count: 81 }, { name: "Credibility", count: 70 },
@@ -764,9 +775,9 @@
             { name: "Greed", count: 14 }, { name: "Desire to help", count: 10 },
             { name: "Attraction", count: 8 }, { name: "Expertise", count: 5 },
             { name: "Social Proof", count: 5 }
-            // ...other factors from your sheet
-        ].sort((a,b) => b.count - a.count); // Sort by count, descending
+        ].sort((a,b) => b.count - a.count);
 
+        // Data for "Attack Type"
         const trendsAttackTypeData = [
             { name: "Phishing", count: 135 }, { name: "Pretexting", count: 102 },
             { name: "Vishing", count: 58 }, { name: "Impersonation", count: 55 },
@@ -774,9 +785,9 @@
             { name: "Quid Pro Quo", count: 19 }, { name: "Spear Phishing", count: 18 },
             { name: "Tailgating", count: 10 }, { name: "Whaling", count: 7 },
             { name: "Watering Hole", count: 6 }
-            // ...other attack types
         ].sort((a,b) => b.count - a.count);
 
+        // Data for "Year"
         const trendsYearData = [
             { name: "1968", count: 1 }, { name: "1981", count: 1 }, { name: "1983", count: 1 },
             { name: "1994", count: 1 }, { name: "1996", count: 1 }, { name: "2000", count: 2 },
@@ -787,21 +798,41 @@
             { name: "2016", count: 19 }, { name: "2017", count: 18 }, { name: "2018", count: 20 },
             { name: "2019", count: 16 }, { name: "2020", count: 25 }, { name: "2021", count: 30 },
             { name: "2022", count: 28 }, { name: "2023", count: 36 }, { name: "2024", count: 18 },
-            { name: "2025", count: 29 },
+            { name: "2025", count: 2 },
         ].sort((a,b) => b.count - a.count);
 
+        // Data for "Loss Type"
         const trendsLossData = [
             { name: "Financial Loss", count: 178 }, { name: "Data Loss", count: 112 },
             { name: "Credential Access", count: 98 }, { name: "Reputational Loss", count: 45 },
             { name: "Loss of PII", count: 30 }, { name: "IP Theft", count: 12 }
         ].sort((a,b) => b.count - a.count);
+        
+        // --- NEW DATA FOR YOUR REQUEST ---
+        const trendsCountryData = [
+            { name: "USA", count: 121 }, { name: "Multiple Countries/Regions", count: 98 },
+            { name: "UK", count: 22 }, { name: "China", count: 10 }, { name: "India", count: 7 },
+            { name: "Germany", count: 5 }
+        ].sort((a,b) => b.count - a.count);
+        
+        const trendsImpersonationData = [
+            { name: "Yes", count: 204 }, { name: "No", count: 82 }
+        ];
+        
+        const trendsPretextingData = [
+            { name: "Yes", count: 231 }, { name: "No", count: 55 }
+        ];
+        // ---------------------------------
 
         // Main mapping object for the new database
         const trendsDataMap = {
             "Psychological Factor": trendsPsychFactorData,
             "Attack Type": trendsAttackTypeData,
             "Year": trendsYearData,
-            "Loss Type": trendsLossData
+            "Loss Type": trendsLossData,
+            "Victim Country": trendsCountryData,
+            "Impersonation Used": trendsImpersonationData,
+            "Pretexting Used": trendsPretextingData
         };
 
         // --- (D.2) DOM Elements ---
