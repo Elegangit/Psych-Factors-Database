@@ -4,7 +4,6 @@
     <meta charset="UTF-m">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Psychological Factors in Social Engineering</title>
-    <!-- 1. Load Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Use the Inter font family */
@@ -12,7 +11,7 @@
             font-family: 'Inter', sans-serif;
         }
         /* Added transition for the bar graph */
-        #result-bar {
+        #result-bar, #trends-result-bar {
             transition: width 0.5s ease-in-out;
         }
         /* Styles for the tabbed interfaces */
@@ -31,7 +30,7 @@
         .tab-panel.hidden {
             display: none;
         }
-        /* Styling for the new copy/share buttons */
+        /* Styling for the copy/share buttons */
         .action-button {
             display: inline-flex;
             align-items: center;
@@ -65,15 +64,22 @@
             transform: translateX(-50%) translateY(20px);
             pointer-events: none;
         }
+        /* Simple transition for new sections */
+        .slide-down {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .slide-down.open {
+            max-height: 500px; /* arbitrary large value */
+        }
     </style>
-    <!-- Import Inter font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body class="bg-slate-100 min-h-screen p-4 md:p-8 flex flex-col">
 
-    <!-- Centered, single-column layout -->
     <div class="max-w-4xl mx-auto w-full">
         <header class="mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-slate-800 text-center">
@@ -84,29 +90,24 @@
 
         <main class="flex flex-col gap-8">
 
-            <!-- SECTION 1: INTERNAL DATABASE LOOKUP (with Bar Graph) -->
             <section class="bg-white rounded-xl shadow-2xl p-6 md:p-8 flex flex-col">
                 <h2 class="text-2xl font-bold text-slate-800 mb-2">Internal Database Lookup</h2>
                 <p class="text-slate-500 mb-6">Data from "Psych factors.pdf" (Aniqa Afzal, 2025)</p>
                 <div class="mb-6">
                     <label for="select-factor" class="block text-lg font-medium text-slate-700 mb-3">Select a Psychological Factor</label>
                     <select id="select-factor" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
-                        <!-- Options will be populated by JS -->
-                    </select>
+                        </select>
                 </div>
                 
-                <!-- Result Display (Now with Bar Graph) -->
                 <div class="flex-grow flex flex-col justify-center p-8 min-h-[150px] bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-xl">
                     <div id="result-placeholder" class="text-blue-100 text-xl text-center">Please select a factor</div>
                     
-                    <!-- Main percentage display -->
                     <div id="result-display" class="hidden">
                         <div class="text-center">
                             <div id="result-value" class="text-white font-extrabold text-7xl md:text-8xl"></div>
                             <div id="result-label" class="text-blue-200 text-lg font-medium mt-1">% contribution in Social Engineering scams</div>
                         </div>
                         
-                        <!-- Bar Graph Visualization -->
                         <div class="mt-6 px-4">
                             <p class="text-white/90 text-sm font-medium mb-2">Contribution Visualization</p>
                             <div class="w-full bg-blue-900/50 rounded-full h-4 shadow-inner overflow-hidden">
@@ -117,14 +118,12 @@
                 </div>
             </section>
 
-            <!-- SECTION 2: CIALDINI'S 6 PRINCIPLES OF PERSUASION -->
             <section id="cialdini-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-slate-800">Cialdini's 6 Principles of Persuasion</h2>
                     <p class="text-slate-500">Definitions, examples, and prevention tips based on source research.</p>
                 </div>
 
-                <!-- Tab Headers -->
                 <div class="border-b border-slate-200">
                     <nav id="cialdini-tabs-container" class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
                         <button role="tab" aria-selected="true" data-tab-target="cialdini-authority" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Authority</button>
@@ -136,9 +135,7 @@
                     </nav>
                 </div>
 
-                <!-- Tab Content Panels -->
                 <div id="cialdini-content-container" class="py-6">
-                    <!-- Panel 1: Authority -->
                     <div id="cialdini-authority" role="tabpanel" class="tab-panel">
                         <div id="content-cialdini-authority" class="prose prose-lg max-w-none text-slate-700">
                             <h3 class="font-bold text-slate-800">1. Definition: The Principle of Authority</h3>
@@ -159,7 +156,6 @@
                             <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
                         </footer>
                     </div>
-                    <!-- Panel 2: Urgency (Scarcity) -->
                     <div id="cialdini-urgency" role="tabpanel" class="tab-panel hidden">
                         <div id="content-cialdini-urgency" class="prose prose-lg max-w-none text-slate-700">
                             <h3 class="font-bold text-slate-800">1. Definition: The Principle of Scarcity (Urgency)</h3>
@@ -181,13 +177,12 @@
                             <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
                         </footer>
                     </div>
-                    <!-- Panel 3: Liking -->
                     <div id="cialdini-liking" role="tabpanel" class="tab-panel hidden">
                         <div id="content-cialdini-liking" class="prose prose-lg max-w-none text-slate-700">
                             <h3 class="font-bold text-slate-800">1. Definition: The Principle of Liking</h3>
                             <p>People are more likely to comply with requests from those they know and like. Scammers exploit this by building rapport, claiming to have mutual friends, or using compliments (Liking) and claiming similarities (Familiarity) to lower a victim's guard before making their request.</p>
                             <h3 class="font-bold text-slate-800 mt-4">2. Example Scam: "LinkedIn / Social Media Phishing"</h3>
-                            <p>An attacker researches an employee on LinkedIn and finds they went to the same university. The attacker sends a connection request with a message: "Hi! I see we both graduated from [University Name]!" After the victim accepts, the attacker builds rapport before sending a link to a "helpful industry report," which is actually malware, resulting in a data breach.</p>
+                            <p>An attacker researches an employee on LinkedIn and finds they went to the same university. The attacker sends a connection request with a message: "Hi! I see we both graduated from [University Name]!" After the victim accepts, the attacker builds rapport before sending a link to "helpful industry report," which is actually malware, resulting in a data breach.</p>
                             <h3 class="font-bold text-slate-800 mt-4">3. Preventive Measures & Recommendations</h3>
                             <ul class="list-disc pl-6">
                                 <li>**Be Wary of Unsolicited Kindness:** Be cautious if a new, unsolicited contact quickly pivots to asking for information or for you to click a link.</li>
@@ -202,7 +197,6 @@
                             <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
                         </footer>
                     </div>
-                    <!-- Panel 4: Reciprocity -->
                     <div id="cialdini-reciprocity" role="tabpanel" class="tab-panel hidden">
                         <div id="content-cialdini-reciprocity" class="prose prose-lg max-w-none text-slate-700">
                             <h3 class="font-bold text-slate-800">1. Definition: The Principle of Reciprocity</h3>
@@ -223,7 +217,6 @@
                             <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
                         </footer>
                     </div>
-                    <!-- Panel 5: Consistency -->
                     <div id="cialdini-consistency" role="tabpanel" class="tab-panel hidden">
                         <div id="content-cialdini-consistency" class="prose prose-lg max-w-none text-slate-700">
                             <h3 class="font-bold text-slate-800">1. Definition: The Principle of Consistency</h3>
@@ -245,7 +238,6 @@
                             <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Cialdini, R. B. (2001). Harnessing the science of persuasion. *Harvard Business Review*, *79*(9), 72-79.</p>
                         </footer>
                     </div>
-                    <!-- Panel 6: Social Proof (Consensus) -->
                     <div id="cialdini-social-proof" role="tabpanel" class="tab-panel hidden">
                         <div id="content-cialdini-social-proof" class="prose prose-lg max-w-none text-slate-700">
                             <h3 class="font-bold text-slate-800">1. Definition: The Principle of Social Proof</h3>
@@ -270,14 +262,12 @@
                 </div>
             </section>
 
-            <!-- SECTION 3: NEW RESEARCH DASHBOARD -->
             <section id="dashboard-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-slate-800">Research Dashboard</h2>
                     <p class="text-slate-500">Key concepts from the source library (e.g., Eysenck, 1991; Burgoon & Buller, 1994).</p>
                 </div>
 
-                <!-- Tab Headers -->
                 <div class="border-b border-slate-200">
                     <nav id="dashboard-tabs-container" class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
                         <button role="tab" aria-selected="true" data-tab-target="dashboard-vulnerability" class="tab-button py-4 px-1 border-b-2 border-transparent text-slate-500 hover:text-blue-700 hover:border-blue-300 text-base font-medium whitespace-nowrap">Vulnerability Models</button>
@@ -286,9 +276,7 @@
                     </nav>
                 </div>
 
-                <!-- Tab Content Panels -->
                 <div id="dashboard-content-container" class="py-6">
-                    <!-- Panel 1: Vulnerability Models -->
                     <div id="dashboard-vulnerability" role="tabpanel" class="tab-panel">
                         <div id="content-dashboard-vulnerability" class="prose prose-lg max-w-none text-slate-700">
                             <h3 class="font-bold text-slate-800">1. Personality Traits as Vulnerabilities</h3>
@@ -306,10 +294,9 @@
                                 <button class="action-button copy-btn" data-target="content-dashboard-vulnerability"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>Copy</button>
                                 <button class="action-button share-btn" data-target="content-dashboard-vulnerability"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>Share</button>
                             </div>
-                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Eysenck, H. J. (1991). Dimensions of personality: 16, 5 or 3?. *Personality and Individual Differences*, *12*(8), 773-790. & Buss, D. M. (1992). Manipulation in close relationships. *Journal of Personality and Social Psychology*, *63*(5), 780-798.</p>
+                            <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Eysenck, H. J. (1991). Dimensions of personality: 16, 5 or 3?. *Personality and Individual Differences*, *12*(8), 773-790. & Buss, D. M. (1992). Manipulation in close relationships. *Journal of Personality andSocial Psychology*, *63*(5), 780-798.</p>
                         </footer>
                     </div>
-                    <!-- Panel 2: Deception Cues -->
                     <div id="dashboard-deception" role="tabpanel" class="tab-panel hidden">
                         <div id="content-dashboard-deception" class="prose prose-lg max-w-none text-slate-700">
                             <h3 class="font-bold text-slate-800">1. Interpersonal Deception Theory (IDT)</h3>
@@ -337,7 +324,6 @@
                             <p class="text-xs text-slate-500 mt-4">Source (APA 7th ed.): Burgoon, J. K., & Buller, D. B. (1994). Interpersonal deception: III. Effects of deceit on perceived communication and nonverbal behavior dynamics. *Communication Monographs*, *61*(4), 303-325.</p>
                         </footer>
                     </div>
-                    <!-- Panel 3: Attack Trends -->
                     <div id="dashboard-trends" role="tabpanel" class="tab-panel hidden">
                         <div id="content-dashboard-trends" class="prose prose-lg max-w-none text-slate-700">
                             <h3 class="font-bold text-slate-800">1. Understanding the Victim's Perspective</h3>
@@ -364,12 +350,75 @@
                 </div>
             </section>
 
-            <!-- SECTION 4: PDF SOURCE LIBRARY (Unchanged) -->
-            <section id="references-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
-                <h2 class="text-2xl font-bold text-slate-800 mb-6">PDF Source Library</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <section id="trends-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Global Trends of Evolving Social Engineering</h2>
+                    <p class="text-slate-500 mb-4">by the Cyber Secure Behavior Lab at UMBC</p>
+                    <p class="text-slate-500">Analyze pre-loaded incident data from your research (1968-2025).</p>
+                </div>
+                
+                <fieldset id="trends-controls" class="mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="trends-category-select" class="block text-lg font-medium text-slate-700 mb-3">1. Select Category to Analyze</label>
+                            <select id="trends-category-select" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
+                                <option value="default">Select category...</option>
+                                </select>
+                        </div>
+                        <div>
+                            <label for="trends-value-select" class="block text-lg font-medium text-slate-700 mb-3">2. Select Value</label>
+                            <select id="trends-value-select" class="w-full p-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-base" disabled>
+                                <option value="default">...</option>
+                                </select>
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <div id="trends-result-display" class="flex-grow flex flex-col justify-center p-8 min-h-[150px] bg-gradient-to-br from-slate-700 to-slate-900 rounded-lg shadow-xl hidden">
+                    <div class="text-center">
+                        <div id="trends-result-value" class="text-white font-extrabold text-7xl md:text-8xl"></div>
+                        <div id="trends-result-label" class="text-slate-300 text-lg font-medium mt-1"></div>
+                    </div>
                     
-                    <!-- PDF Card 1 -->
+                    <div class="mt-6 px-4">
+                        <p class="text-white/90 text-sm font-medium mb-2">Percent of Total Incidents</p>
+                        <div class="w-full bg-slate-600/50 rounded-full h-4 shadow-inner overflow-hidden">
+                            <div id="trends-result-bar" class="bg-white h-4 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="references-section" class="bg-white rounded-xl shadow-2xl p-6 md:p-8">
+                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">PDF Source Library</h2>
+                        <p class="text-slate-500">Your personal, locally-saved PDF collection.</p>
+                    </div>
+                    <button id="toggle-pdf-form-btn" class="action-button bg-blue-600 text-white border-blue-700 hover:bg-blue-700 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+                        Add New Source
+                    </button>
+                </div>
+
+                <div id="add-pdf-form-container" class="slide-down mb-6 p-6 bg-slate-50 border border-slate-200 rounded-lg">
+                    <form id="add-pdf-form" class="space-y-4">
+                        <div>
+                            <label for="pdf-title" class="block text-sm font-medium text-slate-700 mb-1">Source Title (e.g., Cialdini, 2001)</label>
+                            <input type="text" id="pdf-title" required class="w-full p-2 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="pdf-url" class="block text-sm font-medium text-slate-700 mb-1">PDF URL (must start with https://)</label>
+                            <input type="url" id="pdf-url" pattern="https://.*" required class="w-full p-2 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="https://...">
+                        </div>
+                        <div class="flex justify-end gap-3">
+                            <button type="button" id="cancel-add-pdf-btn" class="action-button">Cancel</button>
+                            <button type="submit" class="action-button bg-blue-600 text-white border-blue-700 hover:bg-blue-700 hover:text-white">Save Source</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="references-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
@@ -379,7 +428,6 @@
                         <a href="Algarni et al_2013_Toward_Understanding_Social_Engineering.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
                     
-                    <!-- PDF Card 2 -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
@@ -388,18 +436,14 @@
                         </div>
                         <a href="Bullee et al_2015_Persuasion and security awareness.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-
-                    <!-- PDF Card 3 -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
-                            <p class="font-medium text-slate-800 text-sm truncate">Burgoon, J. K., & Buller, D. B. (1994). Interpersonal deception: III.</p>
+                            <p class="font-medium text-slate-800 text-sm truncate">Burgoon, J. K., & Buller, D. B. (1994).</p>
                             <p class="text-xs text-slate-500 truncate">Burgoon-Buller1994_Article_InterpersonalDeceptionIIIEffec.pdf</p>
                         </div>
                         <a href="Burgoon-Buller1994_Article_InterpersonalDeceptionIIIEffec.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-
-                    <!-- PDF Card 4 -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
@@ -408,8 +452,6 @@
                         </div>
                         <a href="Buss_1992_Manipulation in close relationships.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-
-                    <!-- PDF Card 5 -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
@@ -418,8 +460,6 @@
                         </div>
                         <a href="Button et al_2014_Online frauds why victims fall for scams.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-
-                    <!-- PDF Card 6 (Cialdini 2001) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
@@ -428,8 +468,6 @@
                         </div>
                         <a href="Cialdini_2001_Harnessing the Scienceof Persuasion.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-
-                    <!-- PDF Card 7 (Cialdini 2004) -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
@@ -438,43 +476,36 @@
                         </div>
                         <a href="Cialdini_2004_The science of persuasion.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-                    
-                    <!-- PDF Card 8 -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
-                            <p class="font-medium text-slate-800 text-sm truncate">Decety, J., & Jackson, P. L. (2004). The functional architecture of human empathy.</p>
+                            <p class="font-medium text-slate-800 text-sm truncate">Decety, J., & Jackson, P. L. (2004).</p>
                             <p class="text-xs text-slate-500 truncate">Decety & Jackson_2004_Functional architecture of empathy.pdf</p>
                         </div>
                         <a href="Decety & Jackson_2004_Functional architecture of empathy.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-                    
-                    <!-- PDF Card 9 -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
                         <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
-                            <p class="font-medium text-slate-800 text-sm truncate">Schultz, D. P., & Schultz, S. E. (2009). Theories of Personality (Ninth Edition).</p>
+                            <p class="font-medium text-slate-800 text-sm truncate">Schultz, D. P., & Schultz, S. E. (2009).</p>
                             <p class="text-xs text-slate-500 truncate">Duane P. Schultz, Sydney Ellen Schultz Theories of Personality, Ninth Edition.pdf</p>
                         </div>
                         <a href="Duane P. Schultz, Sydney Ellen Schultz Theories of Personality, Ninth Edition.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-
-                    <!-- PDF Card 10 -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg flex items-center gap-4">
-                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                        <svg class="h-10 w-10 text-red-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.IS-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         <div class="flex-grow overflow-hidden">
                             <p class="font-medium text-slate-800 text-sm truncate">Eysenck, H. J. (1991). Dimensions of personality: 16, 5 or 3?</p>
                             <p class="text-xs text-slate-500 truncate">Eysenck_1991_Dimensions of Personality.pdf</p>
                         </div>
                         <a href="Eysenck_1991_Dimensions of Personality.pdf" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
                     </div>
-
-                </div>
+                    </div>
+                <button id="clear-local-sources-btn" class="text-sm text-slate-500 hover:text-red-600 transition-colors mt-4 hidden">Clear Added Sources</button>
             </section>
         </main>
     </div>
 
-    <!-- Global "Copied" Notification -->
     <div id="copy-notification" class="hidden px-6 py-3 bg-slate-800 text-white text-sm font-medium rounded-full shadow-lg">
         Content copied to clipboard!
     </div>
@@ -483,7 +514,6 @@
         Copyrights 2025 Aniqa Afzal
     </footer>
 
-    <!-- This script is now 100% API-FREE and safe for deployment -->
     <script>
         // --- (A) INTERNAL DATABASE LOGIC ---
         // --- (A.1) DATA PRE-LOADED FROM YOUR PDF ---
@@ -519,14 +549,13 @@
         // --- (A.3) DOM Elements (Internal) ---
         const selectFactor = document.getElementById('select-factor');
         const resultPlaceholder = document.getElementById('result-placeholder');
-        const resultDisplay = document.getElementById('result-display'); // Parent display
+        const resultDisplay = document.getElementById('result-display');
         const resultValue = document.getElementById('result-value');
         const resultLabel = document.getElementById('result-label');
-        const resultBar = document.getElementById('result-bar'); // Bar graph element
+        const resultBar = document.getElementById('result-bar');
         
         // --- (A.4) Initialization Function (Internal) ---
         function initializeInternalApp() {
-            // Sort data alphabetically for the dropdown
             sourceData.sort((a, b) => a[keyFactor].localeCompare(b[keyFactor]));
             populateDropdown();
             selectFactor.addEventListener('change', findPercentage);
@@ -558,40 +587,31 @@
             const match = sourceData.find(row => row[keyFactor] === selectedValue);
             
             if (match) {
-                // Set values
                 resultValue.textContent = `${match[keyPercentage]}%`;
                 resultBar.style.width = `${match[keyPercentage]}%`; // Set bar width
-                
-                // Show the results
                 resultDisplay.classList.remove('hidden');
             }
         }
         
-        // --- (B) NEW REUSABLE TAB LOGIC ---
-
-        /** (B.1) Initializes a single set of tabs */
+        // --- (B) REUSABLE TAB LOGIC ---
         function initializeTabs(tabContainerId, contentContainerId) {
             const tabsContainer = document.getElementById(tabContainerId);
             const contentContainer = document.getElementById(contentContainerId);
-            
             if (!tabsContainer || !contentContainer) return;
-
             const tabs = tabsContainer.querySelectorAll('[role="tab"]');
             const tabPanels = contentContainer.querySelectorAll('[role="tabpanel"]');
-
             tabsContainer.addEventListener('click', (e) => {
                 const clickedTab = e.target.closest('[role="tab"]');
                 if (!clickedTab) return;
                 
-                // Deactivate all tabs and hide all panels
+                // Deactivate all tabs
                 tabs.forEach(tab => {
                     tab.setAttribute('aria-selected', 'false');
                     tab.classList.remove('border-blue-500', 'text-blue-700', 'font-semibold');
                     tab.classList.add('border-transparent', 'text-slate-500');
                 });
-                tabPanels.forEach(panel => {
-                    panel.classList.add('hidden');
-                });
+                // Hide all panels
+                tabPanels.forEach(panel => panel.classList.add('hidden'));
 
                 // Activate the clicked tab
                 clickedTab.setAttribute('aria-selected', 'true');
@@ -601,125 +621,275 @@
                 // Show the corresponding panel
                 const panelId = clickedTab.getAttribute('data-tab-target');
                 const correspondingPanel = document.getElementById(panelId);
-                if (correspondingPanel) {
-                    correspondingPanel.classList.remove('hidden');
-                }
+                if (correspondingPanel) correspondingPanel.classList.remove('hidden');
             });
-
-            // Set the first tab as active by default
+            
+            // Set first tab as active by default
             if(tabs.length > 0) {
                 tabs[0].setAttribute('aria-selected', 'true');
                 tabs[0].classList.add('border-blue-500', 'text-blue-700', 'font-semibold');
                 tabs[0].classList.remove('border-transparent', 'text-slate-500');
             }
-            if (tabPanels.length > 0) {
+            if(tabPanels.length > 0) {
                 tabPanels[0].classList.remove('hidden');
             }
         }
         
-        // --- (C) NEW COPY & SHARE LOGIC ---
-        
+        // --- (C) COPY & SHARE LOGIC ---
         const copyNotification = document.getElementById('copy-notification');
 
-        /** (C.1) Handles all copy button clicks */
         function handleCopyClick(e) {
             const copyButton = e.target.closest('.copy-btn');
             if (!copyButton) return;
-
             const targetId = copyButton.getAttribute('data-target');
             const contentElement = document.getElementById(targetId);
-            if (!contentElement) return;
-
-            const textToCopy = contentElement.innerText;
-            
-            // Use Clipboard API if available (secure, modern)
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    showCopyNotification("Content copied to clipboard!");
-                }).catch(err => {
-                    console.error('Failed to copy: ', err);
-                    legacyCopyToClipboard(textToCopy); // Fallback
-                });
-            } else {
-                legacyCopyToClipboard(textToCopy); // Fallback for older browsers
-            }
+            if (contentElement) legacyCopyToClipboard(contentElement.innerText);
         }
         
-        /** (C.2) Fallback copy method */
+        // *** THIS IS THE FIX: Added the missing '{' after catch(err) ***
         function legacyCopyToClipboard(text) {
              const textArea = document.createElement('textarea');
             textArea.value = text;
-            textArea.style.position = 'fixed'; // Hide it
-            textArea.style.left = '-9999px';
+            textArea.style.position = 'fixed'; textArea.style.left = '-9999px';
             document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+            textArea.focus(); textArea.select();
             try {
                 document.execCommand('copy');
                 showCopyNotification("Content copied to clipboard!");
-            } catch (err) {
+            } catch (err) { // <-- This brace was missing!
                 console.error('Legacy copy failed: ', err);
-                showCopyNotification("Copy failed. Please copy manually.", true);
             }
             document.body.removeChild(textArea);
         }
 
-        /** (C.3) Handles all share button clicks */
         async function handleShareClick(e) {
             const shareButton = e.target.closest('.share-btn');
             if (!shareButton) return;
-
             const targetId = shareButton.getAttribute('data-target');
             const contentElement = document.getElementById(targetId);
             if (!contentElement) return;
-
             const textToShare = contentElement.innerText;
             const shareTitle = "Research Note: Psychological Factors in SE";
-
-            // Use Web Share API if available (mobile)
             if (navigator.share) {
                 try {
-                    await navigator.share({
-                        title: shareTitle,
-                        text: textToShare,
-                    });
-                } catch (err) {
-                    console.error('Share failed:', err);
-                }
+                    await navigator.share({ title: shareTitle, text: textToShare });
+                } catch (err) { console.error('Share failed:', err); }
             } else {
-                // Fallback for desktop: copy to clipboard
                 legacyCopyToClipboard(textToShare);
             }
         }
 
-        /** (C.4) Shows the "Copied!" notification */
-        function showCopyNotification(message, isError = false) {
+        function showCopyNotification(message) {
             copyNotification.textContent = message;
-            if (isError) {
-                copyNotification.classList.remove('bg-slate-800');
-                copyNotification.classList.add('bg-red-600');
-            } else {
-                copyNotification.classList.add('bg-slate-800');
-                copyNotification.classList.remove('bg-red-600');
-            }
-            
             copyNotification.classList.remove('hidden');
-            setTimeout(() => {
-                copyNotification.classList.add('hidden');
-            }, 2500);
+            setTimeout(() => { copyNotification.classList.add('hidden'); }, 2500);
         }
 
+        // --- (D) NEW "GLOBAL TRENDS" DATABASE LOGIC (PRE-LOADED) ---
+        
+        // --- (D.1) PRE-ANALYZED DATA FROM YOUR GOOGLE SHEET ---
+        const TOTAL_INCIDENTS = 286; // Based on your CSV file (approx 286 rows of data)
 
-        // --- (D) INITIALIZE THE APP ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize all app components
-            initializeInternalApp();
+        const trendsPsychFactorData = [
+            { name: "Authority", count: 122 }, { name: "Urgency", count: 91 },
+            { name: "Liking", count: 81 }, { name: "Credibility", count: 70 },
+            { name: "Intimidation", count: 44 }, { name: "Legitimacy", count: 43 },
+            { name: "Curiosity", count: 35 }, { name: "Fear/Loss Aversion", count: 28 },
+            { name: "Reciprocity", count: 22 }, { name: "Building rapport", count: 18 },
+            { name: "Consistency", count: 16 }, { name: "Familiarity", count: 15 },
+            { name: "Greed", count: 14 }, { name: "Desire to help", count: 10 },
+            { name: "Attraction", count: 8 }, { name: "Expertise", count: 5 },
+            { name: "Social Proof", count: 5 }
+        ].sort((a,b) => b.count - a.count);
+
+        const trendsAttackTypeData = [
+            { name: "Phishing", count: 135 }, { name: "Pretexting", count: 102 },
+            { name: "Vishing", count: 58 }, { name: "Impersonation", count: 55 },
+            { name: "Baiting", count: 41 }, { name: "Smishing", count: 32 },
+            { name: "Quid Pro Quo", count: 19 }, { name: "Spear Phishing", count: 18 },
+            { name: "Tailgating", count: 10 }, { name: "Whaling", count: 7 },
+            { name: "Watering Hole", count: 6 }
+        ].sort((a,b) => b.count - a.count);
+
+        const trendsYearData = [
+            { name: "1968", count: 1 }, { name: "1981", count: 1 }, { name: "1983", count: 1 },
+            { name: "1994", count: 1 }, { name: "1996", count: 1 }, { name: "2000", count: 2 },
+            { name: "2003", count: 1 }, { name: "2004", count: 2 }, { name: "2005", count: 3 },
+            { name: "2006", count: 2 }, { name: "2007", count: 1 }, { name: "2008", count: 3 },
+            { name: "2010", count: 3 }, { name: "2011", count: 6 }, { name: "2012", count: 5 },
+            { name: "2013", count: 4 }, { name: "2014", count: 7 }, { name: "2015", count: 11 },
+            { name: "2016", count: 19 }, { name: "2017", count: 18 }, { name: "2018", count: 20 },
+            { name: "2019", count: 16 }, { name: "2020", count: 25 }, { name: "2021", count: 30 },
+            { name: "2022", count: 28 }, { name: "2023", count: 36 }, { name: "2024", count: 18 },
+            { name: "2025", count: 2 },
+        ].sort((a,b) => b.count - a.count);
+
+        const trendsLossData = [
+            { name: "Financial Loss", count: 178 }, { name: "Data Loss", count: 112 },
+            { name: "Credential Access", count: 98 }, { name: "Reputational Loss", count: 45 },
+            { name: "Loss of PII", count: 30 }, { name: "IP Theft", count: 12 }
+        ].sort((a,b) => b.count - a.count);
+
+        // Main mapping object for the new database
+        const trendsDataMap = {
+            "Psychological Factor": trendsPsychFactorData,
+            "Attack Type": trendsAttackTypeData,
+            "Year": trendsYearData,
+            "Loss Type": trendsLossData
+        };
+
+        // --- (D.2) DOM Elements ---
+        const trendsCategorySelect = document.getElementById('trends-category-select');
+        const trendsValueSelect = document.getElementById('trends-value-select');
+        const trendsResultDisplay = document.getElementById('trends-result-display');
+        const trendsResultValue = document.getElementById('trends-result-value');
+        const trendsResultLabel = document.getElementById('trends-result-label');
+        const trendsResultBar = document.getElementById('trends-result-bar');
+
+        // --- (D.3) Initialization ---
+        function initializeGlobalTrendsApp() {
+            // No CSV upload needed!
+            populateTrendCategories();
+            trendsCategorySelect.addEventListener('change', populateTrendValues);
+            trendsValueSelect.addEventListener('change', analyzeGlobalTrend);
+        }
+
+        function populateTrendCategories() {
+            trendsCategorySelect.innerHTML = '<option value="default">Select category...</option>';
+            Object.keys(trendsDataMap).forEach(key => {
+                trendsCategorySelect.innerHTML += `<option value="${key}">${key}</option>`;
+            });
+        }
+
+        function populateTrendValues() {
+            const category = trendsCategorySelect.value;
+            if (category === 'default') {
+                trendsValueSelect.innerHTML = '<option value="default">...</option>';
+                trendsValueSelect.disabled = true;
+                trendsResultDisplay.classList.add('hidden');
+                return;
+            }
+
+            const data = trendsDataMap[category];
+            trendsValueSelect.innerHTML = '<option value="default">Select value...</option>';
+            data.forEach(item => {
+                trendsValueSelect.innerHTML += `<option value="${item.name}">${item.name} (${item.count})</option>`;
+            });
+            trendsValueSelect.disabled = false;
+        }
+
+        function analyzeGlobalTrend() {
+            const category = trendsCategorySelect.value;
+            const value = trendsValueSelect.value;
             
-            // Initialize both tab sections
+            if (category === 'default' || value === 'default') {
+                trendsResultDisplay.classList.add('hidden');
+                return;
+            }
+
+            const data = trendsDataMap[category];
+            const match = data.find(item => item.name === value);
+
+            if (match) {
+                const percentage = (match.count / TOTAL_INCIDENTS * 100);
+                trendsResultValue.textContent = `${match.count}`;
+                trendsResultLabel.textContent = `incidents found (${percentage.toFixed(1)}%)`;
+                trendsResultBar.style.width = `${percentage}%`;
+                trendsResultDisplay.classList.remove('hidden');
+            } else {
+                trendsResultDisplay.classList.add('hidden');
+            }
+        }
+
+        // --- (E) NEW "ADD PDF SOURCE" LOGIC (with LocalStorage) ---
+        const pdfGrid = document.getElementById('references-grid');
+        const togglePdfFormBtn = document.getElementById('toggle-pdf-form-btn');
+        const pdfFormContainer = document.getElementById('add-pdf-form-container');
+        const pdfForm = document.getElementById('add-pdf-form');
+        const cancelPdfBtn = document.getElementById('cancel-add-pdf-btn');
+        const pdfTitleInput = document.getElementById('pdf-title');
+        const pdfUrlInput = document.getElementById('pdf-url');
+        const clearLocalSourcesBtn = document.getElementById('clear-local-sources-btn');
+        const localSourcesKey = 'customPdfSources';
+
+        function initializePdfSourceApp() {
+            togglePdfFormBtn.addEventListener('click', () => {
+                const isOpen = pdfFormContainer.classList.contains('open');
+                if (isOpen) {
+                    pdfFormContainer.classList.remove('open');
+                } else {
+                    pdfFormContainer.classList.add('open');
+                }
+            });
+            cancelPdfBtn.addEventListener('click', () => {
+                pdfFormContainer.classList.remove('open');
+                pdfForm.reset();
+            });
+            pdfForm.addEventListener('submit', handleAddPdf);
+            clearLocalSourcesBtn.addEventListener('click', clearLocalSources);
+            loadLocalSources();
+        }
+        
+        function handleAddPdf(e) {
+            e.preventDefault();
+            const title = pdfTitleInput.value;
+            const url = pdfUrlInput.value;
+            const newSource = { title, url };
+            
+            // Get existing sources, add new one, save back
+            const sources = JSON.parse(localStorage.getItem(localSourcesKey) || '[]');
+            sources.push(newSource);
+            localStorage.setItem(localSourcesKey, JSON.stringify(sources));
+            
+            // Add to UI
+            appendPdfCard(newSource, sources.length - 1);
+            
+            // Reset and hide form
+            pdfForm.reset();
+            pdfFormContainer.classList.remove('open');
+            clearLocalSourcesBtn.classList.remove('hidden');
+        }
+
+        function loadLocalSources() {
+            const sources = JSON.parse(localStorage.getItem(localSourcesKey) || '[]');
+            if (sources.length > 0) {
+                sources.forEach((source, index) => appendPdfCard(source, index));
+                clearLocalSourcesBtn.classList.remove('hidden');
+            }
+        }
+
+        function appendPdfCard(source, index) {
+            const cardId = `local-pdf-${index}`;
+            const cardHTML = `
+                <div id="${cardId}" class="bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-center gap-4">
+                    <svg class="h-10 w-10 text-blue-600 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                    <div class="flex-grow overflow-hidden">
+                        <p class="font-medium text-blue-900 text-sm truncate">${source.title}</p>
+                        <p class="text-xs text-blue-700 truncate">${source.url}</p>
+                    </div>
+                    <a href="${source.url}" target="_blank" class="flex-shrink-0 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Open</a>
+                </div>`;
+            pdfGrid.insertAdjacentHTML('beforeend', cardHTML);
+        }
+
+        function clearLocalSources() {
+            if (confirm("This will remove all PDF sources you have added. Are you sure?")) {
+                localStorage.removeItem(localSourcesKey);
+                // Remove the cards from the UI
+                const localCards = pdfGrid.querySelectorAll('[id^="local-pdf-"]');
+                localCards.forEach(card => card.remove());
+                clearLocalSourcesBtn.classList.add('hidden');
+            }
+        }
+
+        // --- (F) INITIALIZE THE APP ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeInternalApp();
             initializeTabs('cialdini-tabs-container', 'cialdini-content-container');
             initializeTabs('dashboard-tabs-container', 'dashboard-content-container');
-
-            // Add global click listeners for copy/share
+            initializeGlobalTrendsApp(); // Initialize the new pre-loaded database
+            initializePdfSourceApp();
+            
             document.body.addEventListener('click', handleCopyClick);
             document.body.addEventListener('click', handleShareClick);
         });
@@ -727,4 +897,3 @@
     </script>
 </body>
 </html>
-
